@@ -45,6 +45,7 @@ class TextParser(Parser):
 
     def parse(self):
         question = self.message.split("\n+")
+        print question
         try:
             return self._answer(question[0], question[1])
 
