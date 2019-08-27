@@ -16,11 +16,11 @@ class TemperatureCalculator(object):
 
     @classmethod
     def get_cel_type(self, value):
-        return re.search(self.CEL_PATTERN, value).group(0)
+        return re.search(self.CEL_PATTERN, value)
 
     @classmethod
     def get_fah_type(self, value):
-        return re.search(self.FAH_PATTERN, value).group(0)
+        return re.search(self.FAH_PATTERN, value)
 
     def calculate(self):
         temp = int(self.get_temp(self.question))
