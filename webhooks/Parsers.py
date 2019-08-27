@@ -24,7 +24,6 @@ class TemperatureCalculator(object):
 
     def calculate(self):
         temp = int(self.get_temp(self.question))
-        print temp, type
         if self.get_cel_type(self.question):
             return round((temp * 9.0 / 5) + 32, 2)
 
