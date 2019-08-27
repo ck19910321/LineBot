@@ -38,23 +38,15 @@ class Parser(object):
     def parse(self):
         pass
 
-    def responde(self):
-        pass
-
 
 class TextParser(Parser):
-    TYPE = {
+    TYPES = {
         "溫度": TemperatureCalculator
     }
 
     def parse(self):
-        question = self.message.split(" ")
-
-        try:
-            return self._answer(question[0], question[1])
-        except IndexError:
-            return "????"
-
-    def _answer(self, type, question):
-        type_to_answer = self.TYPE[type]
-        return type_to_answer(question).calculate()
+        for type in self.TYPES:
+            if re.search(type, self.message):
+                type_to_answer = self.TYPES[type]
+                return type_to_answer(self.message.replace(type, "")).calculate()
+        return
