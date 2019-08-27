@@ -1,10 +1,13 @@
+# coding=utf-8
 import re
 
 
 class TemperatureCalculator(object):
     TEMP_PATTERN = "\d+"
-    CEL_PATTERN = u"[c|C|\u651d\u6c0f]"
-    FAH_PATTERN = u"[f|F|\u83ef\u6c0f]"
+    # CEL_PATTERN = u"[c|C|\u651d\u6c0f]"
+    # FAH_PATTERN = u"[f|F|\u83ef\u6c0f]"
+    CEL_PATTERN = u"[c|C|攝氏]"
+    FAH_PATTERN = u"[f|F|華氏]"
 
     def __init__(self, question):
         self.question = question
@@ -40,23 +43,17 @@ class Parser(object):
 
 class TextParser(Parser):
     TYPE = {
-        u"\u6eab\u5ea6": TemperatureCalculator
+        "溫度": TemperatureCalculator
     }
 
     def parse(self):
-        question = self.message.split("\n+")
+        question = self.message.split(" ")
+
         try:
             return self._answer(question[0], question[1])
-
         except IndexError:
             return "????"
 
     def _answer(self, type, question):
         type_to_answer = self.TYPE[type]
         return type_to_answer(question).calculate()
-
-# TYPE = {
-#     u"\u6eab\u5ea6": TemperatureCalculator
-# }
-#
-# print TYPE[u"\u6eab\u5ea6"]("145c").calculate()
