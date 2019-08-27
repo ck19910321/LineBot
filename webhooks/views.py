@@ -18,9 +18,11 @@ def callback(request):
 
     try:
         handler.handle(body, signature)
-    except (InvalidSignatureError, LineBotApiError):
+    except InvalidSignatureError as e:
+        print (e.message)
         return HttpResponseForbidden()
-    except LineBotApiError:
+    except LineBotApiError as e:
+        print (e.message)
         return HttpResponseBadRequest()
 
     return HttpResponse("Ok")
