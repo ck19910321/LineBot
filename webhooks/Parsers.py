@@ -3,26 +3,28 @@ import re
 
 
 class TemperatureCalculator(object):
-    TEMP_PATTERN = "\d+"
-    # CEL_PATTERN = u"[c|C|\u651d\u6c0f]"
-    # FAH_PATTERN = u"[f|F|\u83ef\u6c0f]"
-    CEL_PATTERN = u"[c|C|攝氏]"
-    FAH_PATTERN = u"[f|F|華氏]"
+    TEMP_PATTERN = r"\d+"
+    CEL_PATTERN = r"[cC攝]"
+    FAH_PATTERN = r"[fF華]"
 
     def __init__(self, question):
         self.question = question
 
+    @classmethod
     def get_temp(self, value):
         return re.search(self.TEMP_PATTERN, value).group(0)
 
+    @classmethod
     def get_cel_type(self, value):
-        return re.match(self.CEL_PATTERN, value)
+        return re.search(self.CEL_PATTERN, value).group(0)
 
+    @classmethod
     def get_fah_type(self, value):
-        return re.match(self.CEL_PATTERN, value)
+        return re.search(self.FAH_PATTERN, value).group(0)
 
     def calculate(self):
         temp = int(self.get_temp(self.question))
+        print temp, type
         if self.get_cel_type(self.question):
             return round((temp * 9.0 / 5) + 32, 2)
 
