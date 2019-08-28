@@ -42,7 +42,9 @@ class TemperatureCalculator(BaseCalculator):
                 return "攝氏溫度: {}".format(round((temp - 32.0) / 9 * 5, 2))
 
         except TypeError:
-            return self.default
+            pass
+
+        return self.default
 
 
 class BaseConverter(with_metaclass(ABCMeta, object)):
