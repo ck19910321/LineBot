@@ -4,31 +4,45 @@ from abc import ABCMeta, abstractmethod
 import re
 from six import with_metaclass
 
-
-class TemperatureCalculator(object):
-    TEMP_PATTERN = "\d+"
-    CEL_PATTERN = "(?:[cC])+|(?:攝)+"
-    FAH_PATTERN = "(?:[fF])+|(?:華)+"
-
-    def __init__(self, question):
+class BaseCalculator(with_metaclass(ABCMeta, object)):
+    def __init__(self, question, default=None):
         self.question = question
-
-    def get_temp(self, value):
-        return re.search(self.TEMP_PATTERN, value).group(0)
+        self.default = default
 
     def calculate(self):
-        temp = int(self.get_temp(self.question))
-        if re.search(self.CEL_PATTERN, self.question):
-            return "華氏溫度: {}".format(round((temp * 9.0 / 5) + 32, 2))
-
-        elif re.search(self.FAH_PATTERN, self.question):
-            return "攝氏溫度: {}".format(round((temp - 32.0) / 9 * 5, 2))
-
-        return "對不起，我看不懂> <"
+        raise NotImplementedError
 
     @property
     def result(self):
         return self.calculate()
+
+
+class TemperatureCalculator(BaseCalculator):
+    # a tool to calculator tempature and return result
+    TEMP_PATTERN = "\d+"
+    CEL_PATTERN = "(?:[cC])+|(?:攝)+"
+    FAH_PATTERN = "(?:[fF])+|(?:華)+"
+
+    def __init__(self, question, default="對不起，我看不懂> <"):
+        super().__init__(question, default)
+
+    def get_temp(self, value):
+        find_match = re.search(self.TEMP_PATTERN, value)
+        if find_match:
+            return find_match.group(0)
+
+    def calculate(self):
+        try:
+
+            temp = int(self.get_temp(self.question))
+            if re.search(self.CEL_PATTERN, self.question):
+                return "華氏溫度: {}".format(round((temp * 9.0 / 5) + 32, 2))
+
+            elif re.search(self.FAH_PATTERN, self.question):
+                return "攝氏溫度: {}".format(round((temp - 32.0) / 9 * 5, 2))
+
+        except TypeError:
+            return self.default
 
 
 class BaseConverter(with_metaclass(ABCMeta, object)):
