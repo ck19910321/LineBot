@@ -19,7 +19,6 @@ def callback(request):
     try:
         handler.handle(body, signature)
     except InvalidSignatureError as e:
-        print (e.message)
         return HttpResponseForbidden()
     except LineBotApiError as e:
         print (e.__class__, e.message)
@@ -32,7 +31,6 @@ def callback(request):
 def handle_message(event):
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
-    print (answer)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=answer))
