@@ -18,10 +18,10 @@ def callback(request):
     body = request.body.decode('utf-8')
     print ("body ", body)
     try:
-        print "------ start to handle"
+        print ("------ start to handle")
         print (vars(handler))
         handler.handle(body, signature)
-        print "------ finish handler handle"
+        print ("------ finish handler handle")
         print (vars(handler))
     except InvalidSignatureError as e:
         print (e.message)
