@@ -16,13 +16,8 @@ handler = WebhookHandler('d6dd24a1b7cc59462411284e955acd77')
 def callback(request):
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
-    print ("body ", body)
     try:
-        print ("------ start to handle")
-        print (vars(handler))
         handler.handle(body, signature)
-        print ("------ finish handler handle")
-        print (vars(handler))
     except InvalidSignatureError as e:
         print (e.message)
         return HttpResponseForbidden()
@@ -40,5 +35,3 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=answer))
-
-print (vars(handler))
