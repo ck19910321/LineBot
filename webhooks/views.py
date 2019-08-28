@@ -18,11 +18,11 @@ def callback(request):
     body = request.body.decode('utf-8')
     print ("body ", body)
     try:
-        print vars(handler)
         print "------ start to handle"
+        print (vars(handler))
         handler.handle(body, signature)
         print "------ finish handler handle"
-        print vars(handler)
+        print (vars(handler))
     except InvalidSignatureError as e:
         print (e.message)
         return HttpResponseForbidden()
@@ -41,4 +41,4 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=answer))
 
-print vars(handler)
+print (vars(handler))
