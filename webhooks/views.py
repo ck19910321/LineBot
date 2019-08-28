@@ -22,7 +22,7 @@ def callback(request):
         print (e.message)
         return HttpResponseForbidden()
     except LineBotApiError as e:
-        print (e.message)
+        print (e.__class__, e.message)
         return HttpResponseBadRequest()
 
     return HttpResponse("Ok")
@@ -32,6 +32,7 @@ def callback(request):
 def handle_message(event):
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
+    print (answer)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=answer))
