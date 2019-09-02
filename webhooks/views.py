@@ -14,11 +14,13 @@ from webhooks.tasks import reply, send
 @csrf_exempt
 @require_POST
 def callback(request):
+    print(" hey I received this ")
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
     try:
         handler.handle(body, signature)
     except InvalidSignatureError as e:
+        print (e.__class__, e.message)
         return HttpResponseForbidden()
     except LineBotApiError as e:
         print (e.__class__, e.message)
