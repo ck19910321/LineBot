@@ -26,7 +26,7 @@ SECRET_KEY = '@fkn56j52)#i5p0*-y=hrh$u-iek(61d2em2l9)1bl*cxe60qv'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'yianlinebot.herokuapp.com',
+    '.herokuapp.com',
 ]
 
 
