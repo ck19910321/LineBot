@@ -1,6 +1,6 @@
 from linebot.models import TextSendMessage
 
-from line_bot.celery import app
+from line_bot.celery_tasks import app
 from webhooks.line_api import line_bot_api
 
 
