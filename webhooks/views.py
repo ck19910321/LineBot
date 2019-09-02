@@ -16,19 +16,18 @@ line_bot_api = LineBotApi('3fJbjOb+F4yeTpU1Kut6D7DfgZdjEwRabGqBkrTwT+5MFYBrFPWr7
 handler = WebhookHandler('d6dd24a1b7cc59462411284e955acd77')
 
 
-# @csrf_exempt
-# @require_POST
+@csrf_exempt
+@require_POST
 def callback(request):
-    print("test")
-    # signature = request.META['HTTP_X_LINE_SIGNATURE']
-    # body = request.body.decode('utf-8')
-    # try:
-    #     handler.handle(body, signature)
-    # except InvalidSignatureError as e:
-    #     return HttpResponseForbidden()
-    # except LineBotApiError as e:
-    #     print (e.__class__, e.message)
-    #     return HttpResponseBadRequest()
+    signature = request.META['HTTP_X_LINE_SIGNATURE']
+    body = request.body.decode('utf-8')
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError as e:
+        return HttpResponseForbidden()
+    except LineBotApiError as e:
+        print (e.__class__, e.message)
+        return HttpResponseBadRequest()
 
     return HttpResponse("Ok")
 
