@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cc5cdcf-effe-43ba-b980-cbb79542ea1c" name="Default" comment="try this out">
-      <change beforePath="$PROJECT_DIR$/webhooks/views.py" afterPath="$PROJECT_DIR$/webhooks/views.py" />
+      <change beforePath="$PROJECT_DIR$/line_bot/production_settings.py" afterPath="$PROJECT_DIR$/line_bot/production_settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webhooks/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="32" lean-forward="false" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
+            <state relative-caret-position="182">
+              <caret line="17" column="32" lean-forward="false" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
               <folding>
                 <element signature="e#0#69#0" expanded="true" />
               </folding>
@@ -104,11 +104,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="production_settings.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="production_settings.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/line_bot/production_settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="39" column="15" lean-forward="true" selection-start-line="39" selection-start-column="15" selection-end-line="39" selection-end-column="15" />
+            <state relative-caret-position="375">
+              <caret line="25" column="12" lean-forward="false" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -173,10 +173,10 @@
         <option value="$PROJECT_DIR$/line_bot/celery.py" />
         <option value="$PROJECT_DIR$/line_bot/settings.py" />
         <option value="$PROJECT_DIR$/line_bot/__init__.py" />
-        <option value="$PROJECT_DIR$/line_bot/production_settings.py" />
         <option value="$PROJECT_DIR$/line_bot/celery_tasks.py" />
         <option value="$PROJECT_DIR$/webhooks/tasks.py" />
         <option value="$PROJECT_DIR$/webhooks/views.py" />
+        <option value="$PROJECT_DIR$/line_bot/production_settings.py" />
       </list>
     </option>
   </component>
@@ -651,14 +651,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/line_bot/production_settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="39" column="15" lean-forward="true" selection-start-line="39" selection-start-column="15" selection-end-line="39" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/Parsers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="485">
@@ -691,11 +683,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="32" lean-forward="false" selection-start-line="16" selection-start-column="32" selection-end-line="16" selection-end-column="32" />
+        <state relative-caret-position="182">
+          <caret line="17" column="32" lean-forward="false" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
           <folding>
             <element signature="e#0#69#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/line_bot/production_settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="12" lean-forward="false" selection-start-line="25" selection-start-column="12" selection-end-line="25" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>
