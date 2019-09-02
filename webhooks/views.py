@@ -14,7 +14,6 @@ from webhooks.tasks import reply, send
 @csrf_exempt
 @require_POST
 def callback(request):
-    print(" hey I received this ")
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
     try:
@@ -31,10 +30,7 @@ def callback(request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    print(vars(event))
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
     reply.apply_async((event.reply_token, answer), countdown=15)
-    # print("all good?")
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-    #     TextSendMessage(text=answer))

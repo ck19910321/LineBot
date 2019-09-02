@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cc5cdcf-effe-43ba-b980-cbb79542ea1c" name="Default" comment="try this out">
-      <change beforePath="$PROJECT_DIR$/line_bot/production_settings.py" afterPath="$PROJECT_DIR$/line_bot/production_settings.py" />
+      <change beforePath="$PROJECT_DIR$/webhooks/views.py" afterPath="$PROJECT_DIR$/webhooks/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webhooks/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="17" column="32" lean-forward="false" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
+            <state relative-caret-position="270">
+              <caret line="18" column="8" lean-forward="true" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
               <folding>
                 <element signature="e#0#69#0" expanded="true" />
               </folding>
@@ -94,7 +94,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="production_settings.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="production_settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/line_bot/production_settings.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="197">
@@ -166,8 +166,8 @@
         <option value="$PROJECT_DIR$/line_bot/__init__.py" />
         <option value="$PROJECT_DIR$/line_bot/celery_tasks.py" />
         <option value="$PROJECT_DIR$/webhooks/tasks.py" />
-        <option value="$PROJECT_DIR$/webhooks/views.py" />
         <option value="$PROJECT_DIR$/line_bot/production_settings.py" />
+        <option value="$PROJECT_DIR$/webhooks/views.py" />
       </list>
     </option>
   </component>
@@ -626,42 +626,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webhooks/Parsers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="485">
-          <caret line="101" column="83" lean-forward="true" selection-start-line="101" selection-start-column="2" selection-end-line="101" selection-end-column="83" />
-          <folding>
-            <element signature="e#16#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/tasks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="15" column="64" lean-forward="false" selection-start-line="15" selection-start-column="64" selection-end-line="15" selection-end-column="64" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/line_bot/celery_tasks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#56#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webhooks/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="17" column="32" lean-forward="false" selection-start-line="17" selection-start-column="32" selection-end-line="17" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#69#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -687,6 +657,36 @@
         <state relative-caret-position="197">
           <caret line="28" column="21" lean-forward="false" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/line_bot/celery_tasks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#56#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webhooks/Parsers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="485">
+          <caret line="101" column="83" lean-forward="true" selection-start-line="101" selection-start-column="2" selection-end-line="101" selection-end-column="83" />
+          <folding>
+            <element signature="e#16#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webhooks/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="8" lean-forward="true" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#69#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
