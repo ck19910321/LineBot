@@ -30,7 +30,9 @@ def callback(request):
 def handle_message(event):
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
+    print(event.reply_token, answer)
     reply_delay.apply_async((event.reply_token, answer), countdown=30)
+    print("all good?")
     # line_bot_api.reply_message(
     #     event.reply_token,
     #     TextSendMessage(text=answer))
