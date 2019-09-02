@@ -3,6 +3,11 @@
 from abc import ABCMeta, abstractmethod
 import re
 from six import with_metaclass
+from linebot import WebhookHandler, LineBotApi
+from linebot.models import LocationMessage, StickerMessage, TemplateSendMessage
+from linebot.models.actions import PostbackAction, MessageAction, URIAction, DatetimePickerAction
+from linebot.models.template import ButtonsTemplate, CarouselTemplate, CarouselColumn
+
 
 class BaseCalculator(with_metaclass(ABCMeta, object)):
     def __init__(self, question, default=None):
@@ -93,3 +98,5 @@ class BaseParser(with_metaclass(ABCMeta, object)):
 
 class TextParser(BaseParser):
     CONVERTER = TextConverter
+
+# line_bot_api.push_message("R9af83db51ed7223d7522803aa8e94700", carousel_template)
