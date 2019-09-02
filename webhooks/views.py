@@ -16,6 +16,7 @@ from webhooks.tasks import reply, send
 def callback(request):
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
+    print(vars(request))
     try:
         handler.handle(body, signature)
     except InvalidSignatureError as e:
@@ -34,3 +35,9 @@ def handle_message(event):
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
     reply.apply_async((event.reply_token, answer), countdown=15)
+
+# {'type': 'message', 'timestamp': 1567463126728, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '4f30b88717224439982575ba48b96a50', 'message': {"id": "10502121096301", "text": "Hi", "type": "text"}}
+
+# {'type': 'message', 'timestamp': 1567463229032, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "U3f761aaa0c7a2f60a1e9aa9260966c23"}, 'reply_token': '36d0b8520da04ac29a247cfb5a53552e', 'message': {"id": "10502126225980", "text": "\u8001\u516c\u5f88\u7b28", "type": "text"}}
+
+# {'type': 'message', 'timestamp': 1567463392890, 'source': {"type": "user", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '04fea381efa849f385c169efe0ea6bef', 'message': {"id": "10502134513753", "text": "\uff1f\u7528", "type": "text"}}

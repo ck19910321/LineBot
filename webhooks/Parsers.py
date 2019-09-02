@@ -99,4 +99,31 @@ class BaseParser(with_metaclass(ABCMeta, object)):
 class TextParser(BaseParser):
     CONVERTER = TextConverter
 
-# line_bot_api.push_message("R9af83db51ed7223d7522803aa8e94700", carousel_template)
+# # line_bot_api.push_message("R9af83db51ed7223d7522803aa8e94700", carousel_template)
+# line_bot_api = LineBotApi('3fJbjOb+F4yeTpU1Kut6D7DfgZdjEwRabGqBkrTwT+5MFYBrFPWr7Tgs+jWcC9CdpgZmuYNmaUi/ML1X4ncwLq5pV1zD1UxAzkfhX1xdCt2rSpQYE+xR+aQyqWFIObFRR+/E8Yab/2b9IdN9GcNlogdB04t89/1O/w1cDnyilFU=')
+# # handler = WebhookHandler('d6dd24a1b7cc59462411284e955acd77')
+#
+# buttons_template_message = TemplateSendMessage(
+#     alt_text='Buttons template',
+#     template=ButtonsTemplate(
+#         thumbnail_image_url='https://example.com/image.jpg',
+#         title='Menu',
+#         text='Please select',
+#         actions=[
+#             PostbackAction(
+#                 label='postback',
+#                 # display_text='postback text',
+#                 data='action=buy&itemid=1'
+#             ),
+#             # MessageAction(
+#             #     label='message',
+#             #     text='message text'
+#             # ),
+#             # URIAction(
+#             #     label='uri',
+#             #     uri='http://example.com/'
+#             # )
+#         ]
+#     )
+# )
+# line_bot_api.push_message("Ua6a3fc44878a49a3a9c4fbfc699ec9e0", buttons_template_message)
