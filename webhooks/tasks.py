@@ -5,8 +5,12 @@ from webhooks.line_api import line_bot_api
 
 
 @app.task
-def reply_delay(reply_token, text):
+def reply(reply_token, text):
     line_bot_api.reply_message(
         reply_token,
         TextSendMessage(text=text)
     )
+
+@app.task
+def send(token ,text):
+    line_bot_api.push_message(token, TextSendMessage(text=text))

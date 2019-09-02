@@ -7,13 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from webhooks.Parsers import TextParser
-# from webhooks.line_api import handler
-# from webhooks.tasks import reply_delay
-
-from linebot import LineBotApi, WebhookHandler
-
-line_bot_api = LineBotApi('3fJbjOb+F4yeTpU1Kut6D7DfgZdjEwRabGqBkrTwT+5MFYBrFPWr7Tgs+jWcC9CdpgZmuYNmaUi/ML1X4ncwLq5pV1zD1UxAzkfhX1xdCt2rSpQYE+xR+aQyqWFIObFRR+/E8Yab/2b9IdN9GcNlogdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('d6dd24a1b7cc59462411284e955acd77')
+from webhooks.line_api import handler
+from webhooks.tasks import reply, send
 
 
 @csrf_exempt
@@ -36,9 +31,8 @@ def callback(request):
 def handle_message(event):
     text_parser = TextParser(event.message.text)
     answer = text_parser.parse()
-    print(event.reply_token, answer)
-    # reply_delay.apply_async((event.reply_token, answer), countdown=30)
-    print("all good?")
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=answer))
+    reply.apply_async((event.reply_token, answer), countdown=15)
+    # print("all good?")
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text=answer))
