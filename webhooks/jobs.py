@@ -23,7 +23,10 @@ class CacheReminder(object):
         self.status = status
         self.shift_hours = shift_hours
 
-    def get_datetime(self):
+    def get_datetime_by_timezone(self):
+        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=self.shift_hours)
+
+    def get_datetime_wo_tiemzone_aware(self):
         return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M")
 
     def set_timezone(self, hours):
@@ -156,7 +159,7 @@ class WoodyReminder(BaseWoody):
     def can_confirm(self, date_time):
         self.cache_reminder.set_datetime(date_time)
         self.cache_reminder.set_status(True)
-        time_to_send = self.cache_reminder.get_datetime() + timedelta(hours=self.cache_reminder.shift_hours)
+        time_to_send = self.cache_reminder.get_datetime_by_timezone()
         # set status to true
         secs_to_expire = (time_to_send - datetime.utcnow()).total_seconds()
         if secs_to_expire > 0:
@@ -167,7 +170,7 @@ class WoodyReminder(BaseWoody):
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
-        return TextSendMessage(text="設定完畢！將於 {} 提醒您。".format(self.cache_reminder.get_datetime().strftime("%Y-%m-%d %I:%M %p")))
+        return TextSendMessage(text="設定完畢！將於 {} 提醒您。".format(self.cache_reminder.get_datetime_wo_tiemzone_aware().strftime("%Y-%m-%d %I:%M %p")))
 
     def can_ask(self):
         cache_reminder = CacheReminder()
