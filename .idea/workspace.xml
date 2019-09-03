@@ -19,8 +19,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webhooks/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="651">
-              <caret line="62" column="23" lean-forward="true" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="23" />
+            <state relative-caret-position="208">
+              <caret line="37" column="39" lean-forward="true" selection-start-line="37" selection-start-column="39" selection-end-line="37" selection-end-column="39" />
               <folding>
                 <element signature="e#0#34#0" expanded="true" />
               </folding>
@@ -31,8 +31,8 @@
       <file leaf-file-name="jobs.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webhooks/jobs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+            <state relative-caret-position="423">
+              <caret line="89" column="43" lean-forward="false" selection-start-line="89" selection-start-column="43" selection-end-line="89" selection-end-column="43" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -63,8 +63,8 @@
       <file leaf-file-name="Parsers.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webhooks/Parsers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="57" column="30" lean-forward="true" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
+            <state relative-caret-position="1207">
+              <caret line="101" column="25" lean-forward="true" selection-start-line="101" selection-start-column="25" selection-end-line="101" selection-end-column="25" />
               <folding>
                 <element signature="e#16#55#0" expanded="true" />
               </folding>
@@ -138,7 +138,6 @@
       <find>oauth2</find>
       <find>PROJECT_DIR</find>
       <find>STATIC_URL</find>
-      <find>print</find>
       <find>MessageEvent</find>
       <find>__add_handler</find>
       <find>line_bot_api</find>
@@ -162,6 +161,8 @@
       <find>reminder</find>
       <find>cache_reminder</find>
       <find>CELERY_ALWAYS_EAGER</find>
+      <find>print</find>
+      <find>message</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -743,8 +744,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="651">
-          <caret line="62" column="23" lean-forward="true" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="23" />
+        <state relative-caret-position="208">
+          <caret line="37" column="39" lean-forward="true" selection-start-line="37" selection-start-column="39" selection-end-line="37" selection-end-column="39" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
           </folding>
@@ -753,8 +754,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/Parsers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="57" column="30" lean-forward="true" selection-start-line="57" selection-start-column="30" selection-end-line="57" selection-end-column="30" />
+        <state relative-caret-position="1207">
+          <caret line="101" column="25" lean-forward="true" selection-start-line="101" selection-start-column="25" selection-end-line="101" selection-end-column="25" />
           <folding>
             <element signature="e#16#55#0" expanded="true" />
           </folding>
@@ -763,8 +764,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webhooks/jobs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="34" column="0" lean-forward="true" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+        <state relative-caret-position="423">
+          <caret line="89" column="43" lean-forward="false" selection-start-line="89" selection-start-column="43" selection-end-line="89" selection-end-column="43" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>

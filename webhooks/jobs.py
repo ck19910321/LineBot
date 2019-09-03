@@ -27,7 +27,7 @@ class CacheReminder(object):
 
     def get_events(self):
         reminder_template = "來自專屬小幫手的貼心小叮嚀:\n"
-        event_str = "\n -- ".join(event for event in self.events)
+        event_str = "\n".join(event for event in self.events)
         return "{}{}".format(reminder_template, event_str)
 
     def add_event(self, text):
@@ -74,7 +74,6 @@ class WoodyReminder(BaseWoody):
         assert key is not None
         self.key = key
         self.cache_reminder = self._get_cache_reminder()
-        print(self.cache_reminder.to_dict())
 
     def _get_cache_reminder(self):
         cache_reminder_dict = cache.get(self.key)
@@ -87,6 +86,8 @@ class WoodyReminder(BaseWoody):
 
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
+        print(text)
+        print(self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
         return self._build_template(text=self.cache_reminder.get_events())
         # return self._confirm(cache_reminder.get_events())
@@ -104,7 +105,8 @@ class WoodyReminder(BaseWoody):
         self.cache_reminder.set_status(True)
         time_to_send = self.cache_reminder.get_datetime()
         # set status to true
-        secs_to_expire = (time_to_send - datetime.now()).total_seconds()
+        secs_to_expire = (time_to_send - datetime.utcnow()).total_seconds()
+        print("total seconds", secs_to_expire)
         cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
