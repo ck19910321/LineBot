@@ -156,7 +156,7 @@ class WoodyReminder(BaseWoody):
     def can_confirm(self, date_time):
         self.cache_reminder.set_datetime(date_time)
         self.cache_reminder.set_status(True)
-        time_to_send = self.cache_reminder.get_datetime() + timedelta(self.cache_reminder.shift_hours)
+        time_to_send = self.cache_reminder.get_datetime() + timedelta(hours=self.cache_reminder.shift_hours)
         # set status to true
         secs_to_expire = (time_to_send - datetime.utcnow()).total_seconds()
         if secs_to_expire > 0:
