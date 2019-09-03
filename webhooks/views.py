@@ -1,5 +1,5 @@
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import MessageEvent, LocationMessage, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, PostbackEvent, LocationMessage, TextMessage, TextSendMessage
 
 from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -29,12 +29,18 @@ def callback(request):
     return HttpResponse("Ok")
 
 
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+# @handler.add(MessageEvent, message=TextMessage)
+# def handle_message(event):
+#     print(vars(event))
+#     text_parser = TextParser(event.message.text)
+#     answer = text_parser.parse()
+#     reply.apply_async((event.reply_token, answer), countdown=15)
+
+@handler.add(PostbackEvent, message=TextMessage)
+def handle_post_text_message(event):
     print(vars(event))
-    text_parser = TextParser(event.message.text)
-    answer = text_parser.parse()
-    reply.apply_async((event.reply_token, answer), countdown=15)
+
+
 
 # {'type': 'message', 'timestamp': 1567463126728, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '4f30b88717224439982575ba48b96a50', 'message': {"id": "10502121096301", "text": "Hi", "type": "text"}}
 
