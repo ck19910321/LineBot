@@ -21,10 +21,10 @@ class CacheReminder(object):
 
         self.date_time = date_time
         self.status = status
-        self.shift_hours = timedelta(shift_hours)
+        self.shift_hours = shift_hours
 
     def get_datetime(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + self.shift_hours
+        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(self.shift_hours)
 
     def set_timezone(self, hours):
         self.shift_hours = hours
@@ -54,7 +54,8 @@ class CacheReminder(object):
         return {
             "events": [event for event in self.events],
             "date_time": self.date_time,
-            "status": self.status
+            "status": self.status,
+            "shift_hours": self.shift_hours
         }
 
 
@@ -91,8 +92,11 @@ class WoodyReminder(BaseWoody):
 
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
+        print("add ", self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
-        print(self.cache_reminder.to_dict())
+        print("finish add")
+        print(cache.get(self.key))
+
         return TemplateSendMessage(
             alt_text='提醒小幫手',
             template=ButtonsTemplate(
@@ -118,13 +122,15 @@ class WoodyReminder(BaseWoody):
 
     def can_adjust_timezone(self, timezone):
         time_zone_dict = {
-            "taiwan": timedelta(hours=8) * -1,
-            "us": timedelta(hours=7),
-            "japan": timedelta(hours=9) * -1,
+            "taiwan": -8,
+            "us": 7,
+            "japan": -9,
         }
         self.cache_reminder.set_timezone(time_zone_dict[timezone])
+        print("adjust timezone ", self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
-        print(self.cache_reminder.to_dict())
+        print ("finish adjust timezone")
+        print(cache.get(self.key))
         return TemplateSendMessage(
             alt_text='提醒小幫手',
             template=ButtonsTemplate(
