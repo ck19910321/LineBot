@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 from six import with_metaclass
 
 from django.core.cache import cache
@@ -23,7 +23,7 @@ class CacheReminder(object):
         self.status = status
 
     def get_datetime(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M")
+        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=7)
 
     def get_events(self):
         reminder_template = "來自專屬小幫手的貼心小叮嚀:\n"
@@ -108,8 +108,6 @@ class WoodyReminder(BaseWoody):
         cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
-        print(self.key)
-        print(self.cache_reminder.get_events())
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
         return TextSendMessage(text="設定完畢！")
 
