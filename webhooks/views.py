@@ -16,7 +16,6 @@ from webhooks.jobs import JOB_API
 def callback(request):
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
-    print(vars(request))
     try:
         handler.handle(body, signature)
     except InvalidSignatureError as e:
@@ -31,6 +30,7 @@ def callback(request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
+    print(vars(event.source))
     if event.source.type == "user":
         text_generator = TextGenerator(event.message.text, user_id=event.source.userId)
     else:
