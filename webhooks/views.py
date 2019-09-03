@@ -30,7 +30,6 @@ def callback(request):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    print(vars(event.source))
     if event.source.type == "user":
         text_generator = TextGenerator(event.message.text, user_id=event.source.user_id)
     else:
@@ -56,7 +55,6 @@ def handle_post_text_message(event):
     for pair in parse_qsl(event.postback.data):
         data[pair[0]] = pair[1]
 
-    print(data)
     api = JOB_API[data["type"]](key=key)
     methods = api.get_actions()
     func = "can_{}".format(data["action"])

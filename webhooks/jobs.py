@@ -77,6 +77,7 @@ class WoodyReminder(BaseWoody):
 
     def _get_cache_reminder(self):
         cache_reminder_dict = cache.get(self.key)
+        print("fetch", cache_reminder_dict)
         if cache_reminder_dict:
             cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
         else:
@@ -86,8 +87,6 @@ class WoodyReminder(BaseWoody):
 
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
-        print(text)
-        print(self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
         return self._build_template(text=self.cache_reminder.get_events())
         # return self._confirm(cache_reminder.get_events())
