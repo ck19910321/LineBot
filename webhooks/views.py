@@ -60,9 +60,11 @@ def handle_post_text_message(event):
     api = JOB_API[data["type"]](key=key)
     methods = api.get_actions()
     if getattr(event.postback, "params"):
-        message = methods["can_{}".format(data["action"])](event.postback.params.datetime)
+        message = methods["can_{}".format(data["action"])]
+        getattr(api, message)(event.postback.params.datetime)
     else:
-        message = methods["can_{}".format(data["action"])]()
+        message = methods["can_{}".format(data["action"])]
+        getattr(api, message)()
 
     line_bot_api.reply_message(
         event.reply_token,
