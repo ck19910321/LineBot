@@ -59,18 +59,24 @@ def handle_post_text_message(event):
     print(data)
     api = JOB_API[data["type"]](key=key)
     methods = api.get_actions()
-    if getattr(event.postback, "params"):
-        message = methods["can_{}".format(data["action"])]
-        getattr(api, message)(event.postback.params.datetime)
+    func = "can_{}".format(data["action"])
+
+    if func in methods:
+        if getattr(event.postback, "params"):
+            message = getattr(api, func)(event.postback.params.datetime)
+        else:
+            message = getattr(api, func)()
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            message
+        )
+
     else:
-        message = methods["can_{}".format(data["action"])]
-        getattr(api, message)()
-
-    line_bot_api.reply_message(
-        event.reply_token,
-        message
-    )
-
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="錯誤的訊息")
+        )
 # {'type': 'message', 'timestamp': 1567463126728, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '4f30b88717224439982575ba48b96a50', 'message': {"id": "10502121096301", "text": "Hi", "type": "text"}}
 
 # {'type': 'message', 'timestamp': 1567463229032, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "U3f761aaa0c7a2f60a1e9aa9260966c23"}, 'reply_token': '36d0b8520da04ac29a247cfb5a53552e', 'message': {"id": "10502126225980", "text": "\u8001\u516c\u5f88\u7b28", "type": "text"}}
