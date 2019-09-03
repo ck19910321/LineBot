@@ -60,10 +60,9 @@ def handle_post_text_message(event):
     api = JOB_API[data["type"]](key=key)
     methods = api.get_actions()
     func = "can_{}".format(data["action"])
-
     if func in methods:
         if getattr(event.postback, "params"):
-            message = getattr(api, func)(event.postback.params.datetime)
+            message = getattr(api, func)(event.postback.params["datetime"])
         else:
             message = getattr(api, func)()
 
