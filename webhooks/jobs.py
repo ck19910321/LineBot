@@ -105,6 +105,8 @@ class WoodyReminder(BaseWoody):
         cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
+        print(self.key)
+        print(self.cache_reminder.get_events())
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
         return TextSendMessage(text="設定完畢！")
 
