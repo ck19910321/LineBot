@@ -1,17 +1,15 @@
-from urllib.parse import parse_qs
+from urllib.parse import parse_qsl
 
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import MessageEvent, PostbackEvent, LocationMessage, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, PostbackEvent, TextMessage, TextSendMessage
 
-from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from webhooks.Parsers import TextParser
-from webhooks.line_api import handler
-from webhooks.tasks import reply, send
-
+from webhooks.Parsers import TextGenerator
+from webhooks.line_api import handler, line_bot_api
+from webhooks.jobs import JOB_API
 
 @csrf_exempt
 @require_POST
@@ -31,12 +29,19 @@ def callback(request):
     return HttpResponse("Ok")
 
 
-# @handler.add(MessageEvent, message=TextMessage)
-# def handle_message(event):
-#     print(vars(event))
-#     text_parser = TextParser(event.message.text)
-#     answer = text_parser.parse()
-#     reply.apply_async((event.reply_token, answer), countdown=15)
+@handler.add(MessageEvent, message=TextMessage)
+def handle_text_message(event):
+    if event.source.type == "user":
+        text_generator = TextGenerator(event.message.text, user_id=event.source.userId)
+    else:
+        text_generator = TextGenerator(event.message.text, user_id=event.source.userId, room_id=event.source.roomId)
+    message = text_generator.generate()
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        message
+    )
+
 
 @handler.add(PostbackEvent)
 def handle_post_text_message(event):
@@ -44,11 +49,24 @@ def handle_post_text_message(event):
     # 'source': {"type": "user", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"},
     # 'reply_token': 'bc98bf22fa2f4ad7afdf5cdf98ae3f74',
     # 'postback': {"data": "action=buy&itemid=1"}}
-    print(vars(event.postback))
-    data = event.postback.data
-    print(parse_qs(data))
+    # {'data': 'type=remind&action=confirm', 'params': {'datetime': '2019-09-04T10:30'}}
+    key = "{}_{}".format(event.source.userId, getattr(event.source, "roomId", ""))
 
+    data = {}
+    for pair in parse_qsl(event.postback.data):
+        data[pair[0]] = pair[1]
 
+    api = JOB_API[data["type"]](key=key)
+    methods = api.get_actions()
+    if getattr(event.postback, "params"):
+        message = methods["can_{}".format(data["action"])](event.postback.params.datetime)
+    else:
+        message = methods["can_{}".format(data["action"])]()
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        message
+    )
 
 # {'type': 'message', 'timestamp': 1567463126728, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '4f30b88717224439982575ba48b96a50', 'message': {"id": "10502121096301", "text": "Hi", "type": "text"}}
 
