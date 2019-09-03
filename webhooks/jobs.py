@@ -105,8 +105,11 @@ class WoodyReminder(BaseWoody):
         time_to_send = self.cache_reminder.get_datetime()
         # set status to true
         secs_to_expire = (time_to_send - datetime.utcnow()).total_seconds()
-        print("total seconds", secs_to_expire)
-        cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
+        if secs_to_expire > 0:
+            cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
+        else:
+            cache.delete(self.key)
+
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
