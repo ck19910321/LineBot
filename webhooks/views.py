@@ -56,6 +56,7 @@ def handle_post_text_message(event):
     for pair in parse_qsl(event.postback.data):
         data[pair[0]] = pair[1]
 
+    print(data)
     api = JOB_API[data["type"]](key=key)
     methods = api.get_actions()
     if getattr(event.postback, "params"):

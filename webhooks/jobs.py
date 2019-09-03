@@ -128,7 +128,7 @@ class WoodyReminder(BaseWoody):
                 actions=[
                     PostbackAction(
                         label='移除',
-                        data='type=reminder&action=cancel'
+                        data='type=remind&action=cancel'
                     ),
                     DatetimePickerAction(
                         label="選擇需要提醒的時間",
