@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs
+
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, PostbackEvent, LocationMessage, TextMessage, TextSendMessage
 
@@ -38,7 +40,12 @@ def callback(request):
 
 @handler.add(PostbackEvent)
 def handle_post_text_message(event):
-    print(vars(event))
+    # {'type': 'postback', 'timestamp': 1567472954376,
+    # 'source': {"type": "user", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"},
+    # 'reply_token': 'bc98bf22fa2f4ad7afdf5cdf98ae3f74',
+    # 'postback': {"data": "action=buy&itemid=1"}}
+    data = event.postback.data
+    print(parse_qs(data))
 
 
 
