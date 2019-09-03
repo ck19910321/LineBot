@@ -26,7 +26,9 @@ class CacheReminder(object):
         return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M")
 
     def get_events(self):
-        return "\n - ".join(event for event in self.events)
+        reminder_template = "來自專屬小幫手的貼心小叮嚀:\n"
+        event_str = "\n -- ".join(event for event in self.events)
+        return "{}{}".format(reminder_template, event_str)
 
     def add_event(self, text):
         self.events.append(text)
@@ -72,6 +74,7 @@ class WoodyReminder(BaseWoody):
         assert key is not None
         self.key = key
         self.cache_reminder = self._get_cache_reminder()
+        print(self.cache_reminder.to_dict())
 
     def _get_cache_reminder(self):
         cache_reminder_dict = cache.get(self.key)
