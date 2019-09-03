@@ -82,8 +82,6 @@ class WoodyReminder(BaseWoody):
 
     def _get_cache_reminder(self):
         cache_reminder_dict = cache.get(self.key)
-        print ("key", self.key)
-        print("fetch", cache_reminder_dict)
         if cache_reminder_dict:
             cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
         else:
@@ -93,10 +91,7 @@ class WoodyReminder(BaseWoody):
 
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
-        print("add ", self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
-        print("finish add")
-        print(cache.get(self.key))
 
         return TemplateSendMessage(
             alt_text='提醒小幫手',
@@ -128,10 +123,7 @@ class WoodyReminder(BaseWoody):
             "japan": -9,
         }
         self.cache_reminder.set_timezone(time_zone_dict[timezone])
-        print("adjust timezone ", self.cache_reminder.to_dict())
         cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
-        print ("finish adjust timezone")
-        print(cache.get(self.key))
         return TemplateSendMessage(
             alt_text='提醒小幫手',
             template=ButtonsTemplate(
