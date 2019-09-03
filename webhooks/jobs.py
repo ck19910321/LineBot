@@ -59,7 +59,7 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
         self.actions = self.get_actions()
 
     def get_actions(self):
-        return {func for func in dir(self) if func.startswith("can_" and callable(getattr(self, func)))}
+        return {func for func in dir(self) if func.startswith("can_") and callable(getattr(self, func))}
 
     @classmethod
     def new_from_data(cls, **data):
