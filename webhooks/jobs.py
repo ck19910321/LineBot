@@ -12,7 +12,7 @@ from .tasks import send
 class CacheReminder(object):
     def __init__(self, events=None, date_time=None, status=False):
         if events:
-            if isinstance(list, events):
+            if isinstance(events, list):
                 self.events = events
             else:
                 self.events = [events]
