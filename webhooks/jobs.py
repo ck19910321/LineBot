@@ -82,6 +82,7 @@ class WoodyReminder(BaseWoody):
 
     def _get_cache_reminder(self):
         cache_reminder_dict = cache.get(self.key)
+        print ("key", self.key)
         print("fetch", cache_reminder_dict)
         if cache_reminder_dict:
             cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
