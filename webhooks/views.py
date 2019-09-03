@@ -61,6 +61,8 @@ def handle_post_text_message(event):
     if func in methods:
         if getattr(event.postback, "params"):
             message = getattr(api, func)(event.postback.params["datetime"])
+        elif "tz" in data:
+            message = getattr(api, func)(data["tz"])
         else:
             message = getattr(api, func)()
 

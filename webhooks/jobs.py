@@ -10,7 +10,7 @@ from linebot.models.template import ButtonsTemplate, CarouselTemplate, CarouselC
 from .tasks import send
 
 class CacheReminder(object):
-    def __init__(self, events=None, date_time=None, status=False):
+    def __init__(self, events=None, date_time=None, status=False, shift_hours=0):
         if events:
             if isinstance(events, list):
                 self.events = events
@@ -21,9 +21,13 @@ class CacheReminder(object):
 
         self.date_time = date_time
         self.status = status
+        self.shift_hours = timedelta(shift_hours)
 
     def get_datetime(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=7)
+        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + self.shift_hours
+
+    def set_timezone(self, hours):
+        self.shift_hours = hours
 
     def get_events(self):
         reminder_template = "來自專屬小幫手的貼心小叮嚀:\n"
@@ -88,8 +92,58 @@ class WoodyReminder(BaseWoody):
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
         cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
-        return self._build_template(text=self.cache_reminder.get_events())
-        # return self._confirm(cache_reminder.get_events())
+        return TemplateSendMessage(
+            alt_text='提醒小幫手',
+            template=ButtonsTemplate(
+                title='提醒事項',
+                text=self.cache_reminder.get_events(),
+                actions=[
+                    PostbackAction(
+                        label='台灣時區',
+                        data='type=remind&action=adjust_timezone&tz=taiwan'
+                    ),
+                    PostbackAction(
+                        label='美國時區',
+                        data='type=remind&action=adjust_timezone&tz=us'
+                    ),
+                    PostbackAction(
+                        label='日本時區',
+                        data='type=remind&action=adjust_timezone&tz=japan'
+                    ),
+                ]
+            )
+
+        )
+
+    def can_adjust_timezone(self, timezone):
+        time_zone_dict = {
+            "taiwan": timedelta(hours=8) * -1,
+            "us": timedelta(hours=7),
+            "japan": timedelta(hours=9) * -1,
+        }
+        self.cache_reminder.set_timezone(time_zone_dict[timezone])
+        cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
+
+        return TemplateSendMessage(
+            alt_text='提醒小幫手',
+            template=ButtonsTemplate(
+                title='提醒事項',
+                text=self.cache_reminder.get_events(),
+                actions=[
+                    PostbackAction(
+                        label='移除',
+                        data='type=remind&action=cancel'
+                    ),
+                    DatetimePickerAction(
+                        label="選擇需要提醒的時間",
+                        data="type=remind&action=confirm",
+                        mode="datetime",
+                    )
+                ]
+            )
+
+        )
+
 
     # def can_fetch_reminder_list(self, key):
     #     cache_reminder_dict = cache.get(key)
@@ -124,28 +178,6 @@ class WoodyReminder(BaseWoody):
         cache.delete(self.key)
         return TextSendMessage(text="已移除所有提醒")
 
-    # def can_choose_date(self, key):
-
-    def _build_template(self, text):
-        return TemplateSendMessage(
-            alt_text='提醒小幫手',
-            template=ButtonsTemplate(
-                title='提醒事項',
-                text='{text}'.format(text=text),
-                actions=[
-                    PostbackAction(
-                        label='移除',
-                        data='type=remind&action=cancel'
-                    ),
-                    DatetimePickerAction(
-                        label="選擇需要提醒的時間",
-                        data="type=remind&action=confirm",
-                        mode="datetime",
-                    )
-                ]
-            )
-
-        )
 
 JOB_API = {
     "remind": WoodyReminder,
