@@ -16,7 +16,7 @@ from webhooks.tasks import reply, send
 def callback(request):
     signature = request.META['HTTP_X_LINE_SIGNATURE']
     body = request.body.decode('utf-8')
-    print(vars(request))
+    # print(vars(request))
     try:
         handler.handle(body, signature)
     except InvalidSignatureError as e:
@@ -36,7 +36,7 @@ def callback(request):
 #     answer = text_parser.parse()
 #     reply.apply_async((event.reply_token, answer), countdown=15)
 
-@handler.add(PostbackEvent, message=TextMessage)
+@handler.add(PostbackEvent)
 def handle_post_text_message(event):
     print(vars(event))
 
