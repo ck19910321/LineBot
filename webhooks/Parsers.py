@@ -54,7 +54,7 @@ class ReminderController(BaseController):
     @property
     def result(self):
         key = "{}_{}".format(self.user_id, self.room_id)
-        reminder = WoodyReminder(key)
+        reminder = WoodyReminder(key=key)
         return reminder.can_add_reminder(self.message)
 
 

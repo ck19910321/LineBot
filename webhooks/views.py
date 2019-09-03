@@ -50,7 +50,7 @@ def handle_post_text_message(event):
     # 'reply_token': 'bc98bf22fa2f4ad7afdf5cdf98ae3f74',
     # 'postback': {"data": "action=buy&itemid=1"}}
     # {'data': 'type=remind&action=confirm', 'params': {'datetime': '2019-09-04T10:30'}}
-    key = "{}_{}".format(event.source.userId, getattr(event.source, "room_id", ""))
+    key = "{}_{}".format(event.source.user_id, getattr(event.source, "room_id", ""))
 
     data = {}
     for pair in parse_qsl(event.postback.data):
