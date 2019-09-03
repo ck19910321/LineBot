@@ -116,7 +116,7 @@ class WoodyReminder(BaseWoody):
         return TextSendMessage(text="請回覆想被提醒的事項")
 
     def can_cancel(self):
-        cache.remove(self.key)
+        cache.delete(self.key)
         return TextSendMessage(text="已移除所有提醒")
 
     # def can_choose_date(self, key):
