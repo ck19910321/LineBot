@@ -32,9 +32,9 @@ def callback(request):
 def handle_text_message(event):
     print(vars(event.source))
     if event.source.type == "user":
-        text_generator = TextGenerator(event.message.text, user_id=event.source.userId)
+        text_generator = TextGenerator(event.message.text, user_id=event.source.user_id)
     else:
-        text_generator = TextGenerator(event.message.text, user_id=event.source.userId, room_id=event.source.roomId)
+        text_generator = TextGenerator(event.message.text, user_id=event.source.user_id, room_id=event.source.room_id)
     message = text_generator.generate()
 
     line_bot_api.reply_message(
@@ -50,7 +50,7 @@ def handle_post_text_message(event):
     # 'reply_token': 'bc98bf22fa2f4ad7afdf5cdf98ae3f74',
     # 'postback': {"data": "action=buy&itemid=1"}}
     # {'data': 'type=remind&action=confirm', 'params': {'datetime': '2019-09-04T10:30'}}
-    key = "{}_{}".format(event.source.userId, getattr(event.source, "roomId", ""))
+    key = "{}_{}".format(event.source.userId, getattr(event.source, "room_id", ""))
 
     data = {}
     for pair in parse_qsl(event.postback.data):
