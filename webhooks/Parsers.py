@@ -57,6 +57,7 @@ class DateTimeConvertController(BaseController):
 
     def _split_country(self, message):
         countries = message.trim().split("時間轉換")
+        print(countries)
         return countries[0], countries[1]
 
     @property
