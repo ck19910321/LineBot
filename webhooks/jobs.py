@@ -95,15 +95,15 @@ class WoodyTimeConverter(BaseWoody):
 
     def can_choose(self, date_time):
         value = self._get_cache()
-        utc_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") - timedelta(hours=value.get("from_hours", 0))
-        return_date = utc_date + timedelta(hours=value.get("to_hours", 0))
-        print(value)
-        return TextSendMessage(text="{}時間為: {}".format(value.get("country"), return_date.strftime("%Y-%m-%d %I:%M %p")))
+        orig_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
+        utc_date = orig_date - timedelta(hours=value.get("from_hours", 0))
+        new_date = utc_date + timedelta(hours=value.get("to_hours", 0))
+        return TextSendMessage(text="{from_country}時間: {orig_date}，轉換至{to_country}時間:{new_date}".format(from_country=value.get("from_country"), to_country=value.get("to_country"), orig_date=orig_date.strftime("%Y-%m-%d %I:%M %p"), new_date=new_date.strftime("%Y-%m-%d %I:%M %p")))
 
 
 class WoodyReminder(BaseWoody):
     def __init__(self, type="reminder", key=None, *args, **kwargs):
-        super().__init__(type=type)
+        super().__init__(type=type)e
         assert key is not None
         self.key = key
         self.cache_reminder = self._get_cache()
