@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime, timedelta
 from six import with_metaclass
+import json
 
 from django.core.cache import cache
 from linebot.models import TemplateSendMessage, TextSendMessage
@@ -87,13 +88,8 @@ class WoodyTimeConverter(BaseWoody):
         self.key = key
 
     def _get_cache(self):
-        cache_value = cache.get(self.key) or {
-                "from_hours": 0,
-                "to_hours": 0,
-                "from_country": "",
-                "to_country": "",
-            }
-        return cache_value
+        cache_value = cache.get(self.key, '{"from_hours": 0, "to_hours": 0, "from_country": "", "to_country": ""}')
+        return json.loads(cache_value)
 
     def set_cache(self, shift_hours):
         cache.set(self.key, shift_hours, 5 * 60)

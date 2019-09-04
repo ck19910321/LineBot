@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from abc import ABCMeta
+import json
 import re
 from six import with_metaclass
 from linebot.models import TextSendMessage, TemplateSendMessage, DatetimePickerAction, ButtonsTemplate
@@ -74,14 +75,13 @@ class DateTimeConvertController(BaseController):
                 to_country = to_country_match.group(0)
 
         time_converter = WoodyTimeConverter(key=self.key)
-        time_converter.set_cache(
-            {
-                "from_hours": from_hours,
-                "to_hours": to_hours,
-                "from_country": from_country,
-                "to_country": to_country
-            }
-        )
+        data = {
+            "from_hours": from_hours,
+            "to_hours": to_hours,
+            "from_country": from_country,
+            "to_country": to_country
+        }
+        time_converter.set_cache(json.dumps(data))
 
         return TemplateSendMessage(
             alt_text='時間轉換',
