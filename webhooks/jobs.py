@@ -76,6 +76,10 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
         return cls(**data)
 
 
+class WoodyTimeConverter(BaseWoody):
+    pass
+
+
 class WoodyReminder(BaseWoody):
     def __init__(self, type="reminder", key=None, *args, **kwargs):
         super().__init__(type=type)

@@ -55,12 +55,9 @@ class DateTimeConvertController(BaseController):
         ("(?:日)+|(?:大阪])+", timedelta(hours=9) * -1),
     ]
 
-    # def _split_text(self, message):
-    #     split_tokens = message.trim().split("時間轉換")
-    #     return split_tokens[0], split_tokens[1]
-
     @property
     def result(self):
+        print("result?")
         _to_new_date = datetime.utcnow()
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
             if re.search(zone, self.message):
@@ -69,7 +66,7 @@ class DateTimeConvertController(BaseController):
         return TemplateSendMessage(
             alt_text='時間轉換',
             template=ButtonsTemplate(
-                title='',
+                title='aaa',
                 actions=[
                     DatetimePickerAction(
                         label="請選擇想轉換的時間",
