@@ -5,10 +5,24 @@ import json
 
 from django.core.cache import cache
 from linebot.models import TemplateSendMessage, TextSendMessage
-from linebot.models.actions import PostbackAction, MessageAction, URIAction, DatetimePickerAction
+from linebot.models.actions import (
+    PostbackAction,
+    MessageAction,
+    URIAction,
+    DatetimePickerAction,
+)
 from linebot.models.template import ButtonsTemplate, CarouselTemplate, CarouselColumn
 
 from .tasks import send
+
+
+def get_readable_date_time(date_time):
+    return date_time.strftime("%Y-%m-%d %I:%M %p")
+
+
+def to_date_time_object(date_time):
+    return datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
+
 
 class CacheReminder(object):
     def __init__(self, events=None, date_time=None, status=False, shift_hours=0):
@@ -25,7 +39,9 @@ class CacheReminder(object):
         self.shift_hours = shift_hours
 
     def get_datetime_by_timezone(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=self.shift_hours)
+        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(
+            hours=self.shift_hours
+        )
 
     def get_datetime_wo_tiemzone_aware(self):
         return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M")
@@ -59,18 +75,43 @@ class CacheReminder(object):
             "events": [event for event in self.events],
             "date_time": self.date_time,
             "status": self.status,
-            "shift_hours": self.shift_hours
+            "shift_hours": self.shift_hours,
+        }
+
+
+class CacheTimeConvert(object):
+    def __init__(self, from_country="", to_country="", from_hours=0, to_hours=0):
+        self.from_country = from_country
+        self.to_country = to_country
+        self.from_hours = from_hours
+        self.to_hours = to_hours
+
+    @classmethod
+    def new_from_dict(cls, **data):
+        return cls(**data)
+
+    def to_dict(self):
+        return {
+            "from_hours": self.from_hours,
+            "to_hours": self.to_hours,
+            "from_country": self.from_country,
+            "to_country": self.to_country,
         }
 
 
 class BaseWoody(with_metaclass(ABCMeta, object)):
-
     def __init__(self, type=None):
         self.type = type
         self.actions = self.get_actions()
 
     def get_actions(self):
-        return set([func for func in dir(self) if func.startswith("can_") and callable(getattr(self, func))])
+        return set(
+            [
+                func
+                for func in dir(self)
+                if func.startswith("can_") and callable(getattr(self, func))
+            ]
+        )
 
     @classmethod
     def new_from_data(cls, **data):
@@ -87,19 +128,26 @@ class WoodyTimeConverter(BaseWoody):
         self.key = key
 
     def _get_cache(self):
-        cache_value = cache.get(self.key) or '{"from_hours": 0, "to_hours": 0, "from_country": "", "to_country": ""}'
+        cache_value = cache.get(self.key)
         return json.loads(cache_value)
 
     def set_cache(self, shift_hours):
         cache.set(self.key, shift_hours)
 
     def can_choose(self, date_time):
-        value = self._get_cache()
-        orig_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
-        utc_date = orig_date - timedelta(hours=value.get("from_hours", 0))
-        new_date = utc_date + timedelta(hours=value.get("to_hours", 0))
-        print(value)
-        return TextSendMessage(text="{from_country}時間: {orig_date}，轉換至{to_country}時間:{new_date}".format(from_country=value.get("from_country"), to_country=value.get("to_country"), orig_date=orig_date.strftime("%Y-%m-%d %I:%M %p"), new_date=new_date.strftime("%Y-%m-%d %I:%M %p")))
+        cache_dict = self._get_cache() or CacheTimeConvert().to_dict()
+        time_convert = CacheTimeConvert().new_from_dict(**cache_dict)
+        orig_date = to_date_time_object(date_time)
+        utc_date = orig_date - timedelta(hours=time_convert.from_hours)
+        new_date = utc_date + timedelta(hours=time_convert.to_hours)
+        print(cache_dict)
+        return TextSendMessage(
+            text="{instance.from_country}時間: {orig_date}，轉換至{instance.to_country}時間:{new_date}".format(
+                instance=time_convert,
+                orig_date=get_readable_date_time(orig_date),
+                new_date=get_readable_date_time(new_date),
+            )
+        )
 
 
 class WoodyReminder(BaseWoody):
@@ -120,59 +168,47 @@ class WoodyReminder(BaseWoody):
 
     def can_add_reminder(self, text):
         self.cache_reminder.add_event(text)
-        cache.set(self.key, self.cache_reminder.to_dict(), 60*60*2)
+        cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
 
         return TemplateSendMessage(
-            alt_text='提醒小幫手',
+            alt_text="提醒小幫手",
             template=ButtonsTemplate(
-                title='提醒事項',
+                title="提醒事項",
                 text=self.cache_reminder.get_events(),
                 actions=[
                     PostbackAction(
-                        label='台灣時區',
-                        data='type=remind&action=adjust_timezone&tz=taiwan'
+                        label="台灣時區",
+                        data="type=remind&action=adjust_timezone&tz=taiwan",
                     ),
                     PostbackAction(
-                        label='美國時區',
-                        data='type=remind&action=adjust_timezone&tz=us'
+                        label="美國時區", data="type=remind&action=adjust_timezone&tz=us"
                     ),
                     PostbackAction(
-                        label='日本時區',
-                        data='type=remind&action=adjust_timezone&tz=japan'
+                        label="日本時區", data="type=remind&action=adjust_timezone&tz=japan"
                     ),
-                ]
-            )
-
+                ],
+            ),
         )
 
     def can_adjust_timezone(self, timezone):
-        time_zone_dict = {
-            "taiwan": -8,
-            "us": 7,
-            "japan": -9,
-        }
+        time_zone_dict = {"taiwan": -8, "us": 7, "japan": -9}
         self.cache_reminder.set_timezone(time_zone_dict[timezone])
         cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
         return TemplateSendMessage(
-            alt_text='提醒小幫手',
+            alt_text="提醒小幫手",
             template=ButtonsTemplate(
-                title='提醒事項',
+                title="提醒事項",
                 text=self.cache_reminder.get_events(),
                 actions=[
-                    PostbackAction(
-                        label='移除',
-                        data='type=remind&action=cancel'
-                    ),
+                    PostbackAction(label="移除", data="type=remind&action=cancel"),
                     DatetimePickerAction(
                         label="選擇需要提醒的時間",
                         data="type=remind&action=confirm",
                         mode="datetime",
-                    )
-                ]
-            )
-
+                    ),
+                ],
+            ),
         )
-
 
     # def can_fetch_reminder_list(self, key):
     #     cache_reminder_dict = cache.get(key)
@@ -196,11 +232,17 @@ class WoodyReminder(BaseWoody):
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
-        return TextSendMessage(text="設定完畢！將於 {} 提醒您。".format(self.cache_reminder.get_datetime_wo_tiemzone_aware().strftime("%Y-%m-%d %I:%M %p")))
+        return TextSendMessage(
+            text="設定完畢！將於 {} 提醒您。".format(
+                self.cache_reminder.get_datetime_wo_tiemzone_aware().strftime(
+                    "%Y-%m-%d %I:%M %p"
+                )
+            )
+        )
 
     def can_ask(self, value=None):
         cache_reminder = CacheReminder()
-        cache.set(self.key, cache_reminder.to_dict(), 60*60*2)
+        cache.set(self.key, cache_reminder.to_dict(), 60 * 60 * 2)
         return TextSendMessage(text="請回覆想被提醒的事項")
 
     def can_cancel(self, value=None):
@@ -208,7 +250,4 @@ class WoodyReminder(BaseWoody):
         return TextSendMessage(text="已移除所有提醒")
 
 
-JOB_API = {
-    "remind": WoodyReminder,
-    "date_convert": WoodyTimeConverter,
-}
+JOB_API = {"remind": WoodyReminder, "date_convert": WoodyTimeConverter}

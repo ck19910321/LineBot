@@ -19,6 +19,6 @@ from django.contrib import admin
 from webhooks import urls as webhooks_url
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^webhooks/?', include(webhooks_url)),
+    url(r"^admin/", include(admin.site.urls)),
+    url(r"^webhooks/?", include(webhooks_url)),
 ]

@@ -4,7 +4,12 @@ from abc import ABCMeta
 import json
 import re
 from six import with_metaclass
-from linebot.models import TextSendMessage, TemplateSendMessage, DatetimePickerAction, ButtonsTemplate
+from linebot.models import (
+    TextSendMessage,
+    TemplateSendMessage,
+    DatetimePickerAction,
+    ButtonsTemplate,
+)
 
 from .jobs import WoodyReminder, WoodyTimeConverter
 
@@ -36,10 +41,14 @@ class TemperatureController(BaseController):
         try:
             temp = int(self.get_temp(self.message))
             if re.search(self.CEL_PATTERN, self.message):
-                return TextSendMessage(text="華氏溫度: {}".format(round((temp * 9.0 / 5) + 32, 2)))
+                return TextSendMessage(
+                    text="華氏溫度: {}".format(round((temp * 9.0 / 5) + 32, 2))
+                )
 
             elif re.search(self.FAH_PATTERN, self.message):
-                return TextSendMessage(text="攝氏溫度: {}".format(round((temp - 32.0) / 9 * 5, 2)))
+                return TextSendMessage(
+                    text="攝氏溫度: {}".format(round((temp - 32.0) / 9 * 5, 2))
+                )
 
         except (ValueError, TypeError):
             pass
@@ -49,7 +58,7 @@ class TemperatureController(BaseController):
 
 class DateTimeConvertController(BaseController):
     TIME_ZONE_CONVERT = [
-        ("(?:台灣)+|(?:Tai)+|(?:tai)+", 8 ),
+        ("(?:台灣)+|(?:Tai)+|(?:tai)+", 8),
         ("(?:美國)+|(?:洛杉磯)+|(?:LA)+", -7),
         ("(?:日本)+|(?:大阪)+", 9),
     ]
@@ -80,14 +89,14 @@ class DateTimeConvertController(BaseController):
                 "from_hours": from_hours,
                 "to_hours": to_hours,
                 "from_country": from_country,
-                "to_country": to_country
+                "to_country": to_country,
             }
             time_converter.set_cache(json.dumps(data))
 
             return TemplateSendMessage(
-                alt_text='時間轉換',
+                alt_text="時間轉換",
                 template=ButtonsTemplate(
-                    title='時間轉換',
+                    title="時間轉換",
                     text="{} 轉換至 {}".format(from_country, to_country),
                     actions=[
                         DatetimePickerAction(
@@ -95,8 +104,8 @@ class DateTimeConvertController(BaseController):
                             data="type=date_convert&action=choose",
                             mode="datetime",
                         )
-                    ]
-                )
+                    ],
+                ),
             )
         return TextSendMessage(text="對不起 請輸入 <地區> 時間轉換 <地區>")
 
@@ -108,9 +117,8 @@ class ReminderController(BaseController):
         return reminder.can_add_reminder(self.message)
 
 
-
 class BaseParser(with_metaclass(ABCMeta, object)):
-    CONVERT_CLASSES = [] # should be a tuple ("key", converter class)
+    CONVERT_CLASSES = []  # should be a tuple ("key", converter class)
 
     def __init__(self, message, user_id=None, room_id=None):
         self.value = message
@@ -120,7 +128,9 @@ class BaseParser(with_metaclass(ABCMeta, object)):
 
     def parse(self):
         converter = self.from_key_to_class()
-        return converter(message=self.value, user_id=self.user_id, room_id=self.room_id).result
+        return converter(
+            message=self.value, user_id=self.user_id, room_id=self.room_id
+        ).result
 
     def from_key_to_class(self):
         for type, converter in self.CONVERT_CLASSES:
@@ -134,7 +144,7 @@ class TextParser(BaseParser):
     CONVERT_CLASSES = [
         ("溫度", TemperatureController),
         ("提醒", ReminderController),
-        ("時間轉換", DateTimeConvertController)
+        ("時間轉換", DateTimeConvertController),
     ]
 
 
@@ -151,7 +161,9 @@ class BaseGenerator(with_metaclass(ABCMeta, object)):
         return parser.parse()
 
     def get_parser(self):
-        return self.PARSER(message=self.message, user_id=self.user_id, room_id=self.room_id)
+        return self.PARSER(
+            message=self.message, user_id=self.user_id, room_id=self.room_id
+        )
 
 
 class TextGenerator(BaseGenerator):
