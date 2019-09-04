@@ -93,6 +93,8 @@ class WoodyTimeConverter(BaseWoody):
 
     def set_cache(self, shift_hours):
         cache.set(self.key, shift_hours, 5 * 60)
+        print("key set", self.key)
+        print(cache.get(self.key))
 
     def can_choose(self, date_time):
         value = self._get_cache()
