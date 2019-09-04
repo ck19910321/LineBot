@@ -94,7 +94,8 @@ class WoodyTimeConverter(BaseWoody):
 
     def can_choose(self, date_time):
         value = self._get_cache()
-        return_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=value.get("shift_hours", 0))
+        utc_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=value.get("from_hours", 0))
+        return_date = utc_date + timedelta(hours=value.get("to_hours", 0))
         return TextSendMessage(text="{}時間為: {}".format(value.get("country"), return_date.strftime("%Y-%m-%d %I:%M %p")))
 
 

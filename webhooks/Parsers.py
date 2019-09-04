@@ -55,30 +55,49 @@ class DateTimeConvertController(BaseController):
     ]
 
 
+    def _split_country(self, message):
+        countries = message.trim().split("時間轉換")
+        return countries[0], countries[1]
+
     @property
     def result(self):
-        # _to_new_date = datetime.utcnow()
+        from_country, to_country = self._split_country(self.message)
+        from_hours = 0
+        to_hours = 0
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
-            match = re.search(zone, self.message)
-            if match:
-                time_converter = WoodyTimeConverter(key=self.key)
-                country = match.group(0)
-                time_converter.set_cache({"shift_hours": shift_hours, "country": country})
+            from_country_match = re.search(zone, from_country)
+            if not from_hours and from_country_match:
+                from_hours = shift_hours
+                from_country = from_country_match.group(0)
 
-                return TemplateSendMessage(
-                    alt_text='時間轉換',
-                    template=ButtonsTemplate(
-                        title='時間轉換',
-                        text="轉換至{}".format(country),
-                        actions=[
-                            DatetimePickerAction(
-                                label="請選擇想轉換的時間",
-                                data="type=date_convert&action=choose",
-                                mode="datetime",
-                            )
-                        ]
+            to_country_match = re.search(zone, to_country)
+            if not to_hours and to_country_match:
+                to_hours = shift_hours
+                to_country = to_country_match.group(0)
+
+        time_converter = WoodyTimeConverter(key=self.key)
+        time_converter.set_cache(
+            {
+                "from_hours": from_hours,
+                "to_hours": to_hours,
+                "from_country": from_country,
+                "to_country": to_country}
+        )
+
+        return TemplateSendMessage(
+            alt_text='時間轉換',
+            template=ButtonsTemplate(
+                title='時間轉換',
+                text="{} 轉換至 {}".format(from_country, to_country),
+                actions=[
+                    DatetimePickerAction(
+                        label="請選擇想轉換的時間",
+                        data="type=date_convert&action=choose",
+                        mode="datetime",
                     )
-                )
+                ]
+            )
+        )
         return TextSendMessage(text=self.default)
 
 
