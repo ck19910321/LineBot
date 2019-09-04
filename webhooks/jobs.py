@@ -98,6 +98,7 @@ class WoodyTimeConverter(BaseWoody):
         orig_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
         utc_date = orig_date - timedelta(hours=value.get("from_hours", 0))
         new_date = utc_date + timedelta(hours=value.get("to_hours", 0))
+        print(value)
         return TextSendMessage(text="{from_country}時間: {orig_date}，轉換至{to_country}時間:{new_date}".format(from_country=value.get("from_country"), to_country=value.get("to_country"), orig_date=orig_date.strftime("%Y-%m-%d %I:%M %p"), new_date=new_date.strftime("%Y-%m-%d %I:%M %p")))
 
 
