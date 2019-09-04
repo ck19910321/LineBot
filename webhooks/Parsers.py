@@ -57,16 +57,15 @@ class DateTimeConvertController(BaseController):
 
     @property
     def result(self):
-        print("result?")
         _to_new_date = datetime.utcnow()
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
             if re.search(zone, self.message):
-                _to_new_date += timedelta
+                _to_new_date += shift_hours
 
         return TemplateSendMessage(
             alt_text='時間轉換',
             template=ButtonsTemplate(
-                title='aaa',
+                title='',
                 actions=[
                     DatetimePickerAction(
                         label="請選擇想轉換的時間",

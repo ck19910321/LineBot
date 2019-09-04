@@ -77,8 +77,13 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
 
 
 class WoodyTimeConverter(BaseWoody):
-    pass
+    def __init(self, type="date_convert", key=None, *args, **kwargs):
+        super().__init__(type=type)
+        assert key is not None
+        self.key = key
 
+    def can_choose(self):
+        pass
 
 class WoodyReminder(BaseWoody):
     def __init__(self, type="reminder", key=None, *args, **kwargs):
