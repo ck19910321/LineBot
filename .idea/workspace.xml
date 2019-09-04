@@ -2,30 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3cc5cdcf-effe-43ba-b980-cbb79542ea1c" name="Default" comment="try this out">
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/base.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/base.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/changelists.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/changelists.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/dashboard.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/dashboard.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/forms.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/forms.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/login.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/login.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/rtl.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/rtl.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/css/widgets.css" afterPath="$PROJECT_DIR$/line_bot/static/admin/css/widgets.css" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/SelectBox.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/SelectBox.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/SelectFilter2.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/SelectFilter2.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/actions.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/actions.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/actions.min.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/actions.min.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/admin/DateTimeShortcuts.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/admin/DateTimeShortcuts.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/admin/RelatedObjectLookups.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/admin/RelatedObjectLookups.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/calendar.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/calendar.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/collapse.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/collapse.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/collapse.min.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/collapse.min.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/core.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/core.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/inlines.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/inlines.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/inlines.min.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/inlines.min.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/jquery.init.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/jquery.init.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/prepopulate.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/prepopulate.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/prepopulate.min.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/prepopulate.min.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/timeparse.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/timeparse.js" />
-      <change beforePath="$PROJECT_DIR$/line_bot/static/admin/js/urlify.js" afterPath="$PROJECT_DIR$/line_bot/static/admin/js/urlify.js" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -74,8 +51,8 @@
       <file leaf-file-name="requirements.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/requirements.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="43" column="16" lean-forward="false" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+            <state relative-caret-position="15">
+              <caret line="9" column="12" lean-forward="true" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -783,8 +760,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="43" column="16" lean-forward="false" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+        <state relative-caret-position="15">
+          <caret line="9" column="12" lean-forward="true" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
           <folding />
         </state>
       </provider>
