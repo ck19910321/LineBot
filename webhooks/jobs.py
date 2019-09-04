@@ -83,7 +83,6 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
 class WoodyTimeConverter(BaseWoody):
     def __init__(self, type="date_convert", key=None, *args, **kwargs):
         super().__init__(type=type)
-        print(key)
         assert key is not None
         self.key = key
 
@@ -93,13 +92,12 @@ class WoodyTimeConverter(BaseWoody):
 
     def set_cache(self, shift_hours):
         cache.set(self.key, shift_hours)
-        print("key set", self.key)
-        print(cache.get(self.key))
 
     def can_choose(self, date_time):
         value = self._get_cache()
-        utc_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=value.get("from_hours", 0))
+        utc_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") - timedelta(hours=value.get("from_hours", 0))
         return_date = utc_date + timedelta(hours=value.get("to_hours", 0))
+        print(value)
         return TextSendMessage(text="{}時間為: {}".format(value.get("country"), return_date.strftime("%Y-%m-%d %I:%M %p")))
 
 
