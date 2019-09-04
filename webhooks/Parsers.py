@@ -74,29 +74,31 @@ class DateTimeConvertController(BaseController):
                 to_hours = shift_hours
                 to_country = to_country_match.group(0)
 
-        time_converter = WoodyTimeConverter(key=self.key)
-        data = {
-            "from_hours": from_hours,
-            "to_hours": to_hours,
-            "from_country": from_country,
-            "to_country": to_country
-        }
-        time_converter.set_cache(json.dumps(data))
+        if from_hours and to_hours:
+            time_converter = WoodyTimeConverter(key=self.key)
+            data = {
+                "from_hours": from_hours,
+                "to_hours": to_hours,
+                "from_country": from_country,
+                "to_country": to_country
+            }
+            time_converter.set_cache(json.dumps(data))
 
-        return TemplateSendMessage(
-            alt_text='時間轉換',
-            template=ButtonsTemplate(
-                title='時間轉換',
-                text="{} 轉換至 {}".format(from_country, to_country),
-                actions=[
-                    DatetimePickerAction(
-                        label="請選擇想轉換的時間",
-                        data="type=date_convert&action=choose",
-                        mode="datetime",
-                    )
-                ]
+            return TemplateSendMessage(
+                alt_text='時間轉換',
+                template=ButtonsTemplate(
+                    title='時間轉換',
+                    text="{} 轉換至 {}".format(from_country, to_country),
+                    actions=[
+                        DatetimePickerAction(
+                            label="請選擇想轉換的時間",
+                            data="type=date_convert&action=choose",
+                            mode="datetime",
+                        )
+                    ]
+                )
             )
-        )
+        return TextSendMessage(text="對不起 請輸入 <地區> 時間轉換 <地區>")
 
 
 class ReminderController(BaseController):
