@@ -75,24 +75,37 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
     def new_from_data(cls, **data):
         return cls(**data)
 
+    def _get_cache(self):
+        pass
+
 
 class WoodyTimeConverter(BaseWoody):
     def __init(self, type="date_convert", key=None, *args, **kwargs):
         super().__init__(type=type)
         assert key is not None
         self.key = key
+        self.cache_hours = self._get_cache() or 0
 
-    def can_choose(self):
-        pass
+    def _get_cache(self):
+        cache_value = cache.get(self.key)
+        return cache_value
+
+    def set_cache(self, shift_hours):
+        cache.set(self.key, shift_hours, 5 * 60)
+
+    def can_choose(self, date_time):
+        return_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=self.cache_hours)
+        return TextSendMessage(text="目的地時間為: {}".format(return_date.strftime("%Y-%m-%d %I:%M %p")))
+
 
 class WoodyReminder(BaseWoody):
     def __init__(self, type="reminder", key=None, *args, **kwargs):
         super().__init__(type=type)
         assert key is not None
         self.key = key
-        self.cache_reminder = self._get_cache_reminder()
+        self.cache_reminder = self._get_cache()
 
-    def _get_cache_reminder(self):
+    def _get_cache(self):
         cache_reminder_dict = cache.get(self.key)
         if cache_reminder_dict:
             cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
@@ -193,4 +206,5 @@ class WoodyReminder(BaseWoody):
 
 JOB_API = {
     "remind": WoodyReminder,
+    "date_convert": WoodyTimeConverter,
 }

@@ -6,15 +6,14 @@ import re
 from six import with_metaclass
 from linebot.models import TextSendMessage, TemplateSendMessage, DatetimePickerAction, ButtonsTemplate
 
-from .jobs import WoodyReminder
+from .jobs import WoodyReminder, WoodyTimeConverter
 
 
 class BaseController(with_metaclass(ABCMeta, object)):
     def __init__(self, message, default="對不起，我看不懂> <", user_id="", room_id=""):
         self.message = message
         self.default = default
-        self.user_id = user_id
-        self.room_id = room_id
+        self.key = "{}_{}".format(user_id, room_id)
 
     @property
     def result(self):
@@ -50,43 +49,43 @@ class TemperatureController(BaseController):
 
 class DateTimeConvertController(BaseController):
     TIME_ZONE_CONVERT = [
-        ("(?:台灣)+|(?:Tai])+|(?:tai])+", timedelta(hours=8) * -1,),
-        ("(?:美國)+|(?:洛杉磯])+|(?:LA])+", timedelta(hours=7)),
-        ("(?:日本)+|(?:大阪])+", timedelta(hours=9) * -1),
+        ("(?:台灣)+|(?:Tai])+|(?:tai])+", 8 * -1,),
+        ("(?:美國)+|(?:洛杉磯])+|(?:LA])+", 7),
+        ("(?:日本)+|(?:大阪])+", 9 * -1),
     ]
 
 
     @property
     def result(self):
-        country = ""
         _to_new_date = datetime.utcnow()
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
             match = re.search(zone, self.message)
             if match:
-                _to_new_date += shift_hours
-                country = match.group(0)
+                time_converter = WoodyTimeConverter(key=self.key)
+                time_converter.set_cache(shift_hours)
 
-        return TemplateSendMessage(
-            alt_text='時間轉換',
-            template=ButtonsTemplate(
-                title='時間轉換',
-                text="轉換至{}".format(country),
-                actions=[
-                    DatetimePickerAction(
-                        label="請選擇想轉換的時間",
-                        data="type=date_convert&action=choose",
-                        mode="datetime",
+                country = match.group(0)
+                return TemplateSendMessage(
+                    alt_text='時間轉換',
+                    template=ButtonsTemplate(
+                        title='時間轉換',
+                        text="轉換至{}".format(country),
+                        actions=[
+                            DatetimePickerAction(
+                                label="請選擇想轉換的時間",
+                                data="type=date_convert&action=choose",
+                                mode="datetime",
+                            )
+                        ]
                     )
-                ]
-            )
-        )
+                )
+        return TextSendMessage(text=self.default)
 
 
 class ReminderController(BaseController):
     @property
     def result(self):
-        key = "{}_{}".format(self.user_id, self.room_id)
-        reminder = WoodyReminder(key=key)
+        reminder = WoodyReminder(key=self.key)
         return reminder.can_add_reminder(self.message)
 
 
