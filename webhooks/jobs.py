@@ -80,7 +80,7 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
 
 
 class WoodyTimeConverter(BaseWoody):
-    def __init(self, type="date_convert", key=None, *args, **kwargs):
+    def __init__(self, type="date_convert", key=None, *args, **kwargs):
         super().__init__(type=type)
         assert key is not None
         self.key = key
