@@ -103,7 +103,7 @@ class WoodyTimeConverter(BaseWoody):
 
 class WoodyReminder(BaseWoody):
     def __init__(self, type="reminder", key=None, *args, **kwargs):
-        super().__init__(type=type)e
+        super().__init__(type=type)
         assert key is not None
         self.key = key
         self.cache_reminder = self._get_cache()

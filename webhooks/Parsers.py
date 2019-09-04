@@ -49,9 +49,9 @@ class TemperatureController(BaseController):
 
 class DateTimeConvertController(BaseController):
     TIME_ZONE_CONVERT = [
-        ("(?:台灣)+|(?:Tai])+|(?:tai])+", 8 * -1,),
-        ("(?:美國)+|(?:洛杉磯])+|(?:LA])+", 7),
-        ("(?:日本)+|(?:大阪])+", 9 * -1),
+        ("(?:台灣)+|(?:Tai])+|(?:tai])+", 8 ),
+        ("(?:美國)+|(?:洛杉磯])+|(?:LA])+", -7),
+        ("(?:日本)+|(?:大阪])+", 9),
     ]
 
     def _split_country(self, message):
