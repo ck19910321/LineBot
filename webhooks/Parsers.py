@@ -50,22 +50,27 @@ class TemperatureController(BaseController):
 
 class DateTimeConvertController(BaseController):
     TIME_ZONE_CONVERT = [
-        ("(?:台)+|(?:Tai])+|(?:tai])+", timedelta(hours=8) * -1,),
-        ("(?:美)+|(?:洛杉磯])+|(?:LA])+", timedelta(hours=7)),
-        ("(?:日)+|(?:大阪])+", timedelta(hours=9) * -1),
+        ("(?:台灣)+|(?:Tai])+|(?:tai])+", timedelta(hours=8) * -1,),
+        ("(?:美國)+|(?:洛杉磯])+|(?:LA])+", timedelta(hours=7)),
+        ("(?:日本)+|(?:大阪])+", timedelta(hours=9) * -1),
     ]
+
 
     @property
     def result(self):
+        country = ""
         _to_new_date = datetime.utcnow()
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
-            if re.search(zone, self.message):
+            match = re.search(zone, self.message)
+            if match:
                 _to_new_date += shift_hours
+                country = match.group(0)
 
         return TemplateSendMessage(
             alt_text='時間轉換',
             template=ButtonsTemplate(
-                title='',
+                title='時間轉換',
+                text="轉換至{}".format(country),
                 actions=[
                     DatetimePickerAction(
                         label="請選擇想轉換的時間",
