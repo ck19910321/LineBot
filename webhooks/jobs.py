@@ -84,7 +84,6 @@ class WoodyTimeConverter(BaseWoody):
         super().__init__(type=type)
         assert key is not None
         self.key = key
-        self.cache_hours = self._get_cache() or 0
 
     def _get_cache(self):
         cache_value = cache.get(self.key)
@@ -94,8 +93,9 @@ class WoodyTimeConverter(BaseWoody):
         cache.set(self.key, shift_hours, 5 * 60)
 
     def can_choose(self, date_time):
-        return_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=self.cache_hours)
-        return TextSendMessage(text="目的地時間為: {}".format(return_date.strftime("%Y-%m-%d %I:%M %p")))
+        value = self._get_cache()
+        return_date = datetime.strptime(date_time, "%Y-%m-%dT%H:%M") + timedelta(hours=value.get("shift_hours", 0))
+        return TextSendMessage(text="{}時間為: {}".format(value.get("country"), return_date.strftime("%Y-%m-%d %I:%M %p")))
 
 
 class WoodyReminder(BaseWoody):

@@ -57,14 +57,14 @@ class DateTimeConvertController(BaseController):
 
     @property
     def result(self):
-        _to_new_date = datetime.utcnow()
+        # _to_new_date = datetime.utcnow()
         for zone, shift_hours in self.TIME_ZONE_CONVERT:
             match = re.search(zone, self.message)
             if match:
                 time_converter = WoodyTimeConverter(key=self.key)
-                time_converter.set_cache(shift_hours)
-
                 country = match.group(0)
+                time_converter.set_cache({"shift_hours": shift_hours, "country": country})
+
                 return TemplateSendMessage(
                     alt_text='時間轉換',
                     template=ButtonsTemplate(
