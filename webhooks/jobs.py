@@ -172,12 +172,12 @@ class WoodyReminder(BaseWoody):
         send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
         return TextSendMessage(text="設定完畢！將於 {} 提醒您。".format(self.cache_reminder.get_datetime_wo_tiemzone_aware().strftime("%Y-%m-%d %I:%M %p")))
 
-    def can_ask(self):
+    def can_ask(self, value=None):
         cache_reminder = CacheReminder()
         cache.set(self.key, cache_reminder.to_dict(), 60*60*2)
         return TextSendMessage(text="請回覆想被提醒的事項")
 
-    def can_cancel(self):
+    def can_cancel(self, value=None):
         cache.delete(self.key)
         return TextSendMessage(text="已移除所有提醒")
 

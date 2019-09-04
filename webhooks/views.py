@@ -34,8 +34,8 @@ def handle_text_message(event):
         text_generator = TextGenerator(event.message.text, user_id=event.source.user_id)
     else:
         text_generator = TextGenerator(event.message.text, user_id=event.source.user_id, room_id=event.source.room_id)
-    message = text_generator.generate()
 
+    message = text_generator.generate()
     line_bot_api.reply_message(
         event.reply_token,
         message
@@ -45,34 +45,30 @@ def handle_text_message(event):
 @handler.add(PostbackEvent)
 def handle_post_text_message(event):
     key = "{}_{}".format(event.source.user_id, getattr(event.source, "room_id", ""))
-
-    data = {}
-    for pair in parse_qsl(event.postback.data):
-        data[pair[0]] = pair[1]
-
+    data, param = _handle_postback_data(event.postback)
     api = JOB_API[data["type"]](key=key)
-    methods = api.get_actions()
     func = "can_{}".format(data["action"])
-    if func in methods:
-        if getattr(event.postback, "params"):
-            message = getattr(api, func)(event.postback.params["datetime"])
-        elif "tz" in data:
-            message = getattr(api, func)(data["tz"])
-        else:
-            message = getattr(api, func)()
+    try:
+        message = getattr(api, func)(param)
 
+    except AttributeError:
+        message = TextSendMessage(text="錯誤的訊息")
+
+    finally:
         line_bot_api.reply_message(
             event.reply_token,
             message
         )
 
+
+def _handle_postback_data(postback):
+    data = {}
+    for pair in parse_qsl(postback.data):
+        data[pair[0]] = pair[1]
+
+    if getattr(postback, "params"):
+        required_param = postback.params["datetime"]
     else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="錯誤的訊息")
-        )
-# {'type': 'message', 'timestamp': 1567463126728, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '4f30b88717224439982575ba48b96a50', 'message': {"id": "10502121096301", "text": "Hi", "type": "text"}}
+        required_param = data.get("tz")
 
-# {'type': 'message', 'timestamp': 1567463229032, 'source': {"roomId": "Rcc819f2974fa9773ecfdfd08e97f03e5", "type": "room", "userId": "U3f761aaa0c7a2f60a1e9aa9260966c23"}, 'reply_token': '36d0b8520da04ac29a247cfb5a53552e', 'message': {"id": "10502126225980", "text": "\u8001\u516c\u5f88\u7b28", "type": "text"}}
-
-# {'type': 'message', 'timestamp': 1567463392890, 'source': {"type": "user", "userId": "Ua6a3fc44878a49a3a9c4fbfc699ec9e0"}, 'reply_token': '04fea381efa849f385c169efe0ea6bef', 'message': {"id": "10502134513753", "text": "\uff1f\u7528", "type": "text"}}
+    return data, required_param

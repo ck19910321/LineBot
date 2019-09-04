@@ -1,10 +1,10 @@
 # coding=utf-8
 
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
+from datetime import datetime, timedelta
 import re
 from six import with_metaclass
-from linebot import WebhookHandler, LineBotApi
-from linebot.models import TextSendMessage
+from linebot.models import TextSendMessage, TemplateSendMessage, DatetimePickerAction, ButtonsTemplate
 
 from .jobs import WoodyReminder
 
@@ -35,7 +35,6 @@ class TemperatureController(BaseController):
     @property
     def result(self):
         try:
-
             temp = int(self.get_temp(self.message))
             if re.search(self.CEL_PATTERN, self.message):
                 return TextSendMessage(text="華氏溫度: {}".format(round((temp * 9.0 / 5) + 32, 2)))
@@ -49,13 +48,46 @@ class TemperatureController(BaseController):
         return TextSendMessage(text=self.default)
 
 
-class ReminderController(BaseController):
+class DateTimeConvertController(BaseController):
+    TIME_ZONE_CONVERT = [
+        ("(?:台)+|(?:Tai])+|(?:tai])+", timedelta(hours=8) * -1,),
+        ("(?:美)+|(?:洛杉磯])+|(?:LA])+", timedelta(hours=7)),
+        ("(?:日)+|(?:大阪])+", timedelta(hours=9) * -1),
+    ]
 
+    # def _split_text(self, message):
+    #     split_tokens = message.trim().split("時間轉換")
+    #     return split_tokens[0], split_tokens[1]
+
+    @property
+    def result(self):
+        _to_new_date = datetime.utcnow()
+        for zone, shift_hours in self.TIME_ZONE_CONVERT:
+            if re.search(zone, self.message):
+                _to_new_date += timedelta
+
+        return TemplateSendMessage(
+            alt_text='時間轉換',
+            template=ButtonsTemplate(
+                title='',
+                actions=[
+                    DatetimePickerAction(
+                        label="請選擇想轉換的時間",
+                        data="type=date_convert&action=choose",
+                        mode="datetime",
+                    )
+                ]
+            )
+        )
+
+
+class ReminderController(BaseController):
     @property
     def result(self):
         key = "{}_{}".format(self.user_id, self.room_id)
         reminder = WoodyReminder(key=key)
         return reminder.can_add_reminder(self.message)
+
 
 
 class BaseParser(with_metaclass(ABCMeta, object)):
@@ -82,7 +114,8 @@ class BaseParser(with_metaclass(ABCMeta, object)):
 class TextParser(BaseParser):
     CONVERT_CLASSES = [
         ("溫度", TemperatureController),
-        ("提醒", ReminderController)
+        ("提醒", ReminderController),
+        ("時間轉換", DateTimeConvertController)
     ]
 
 
@@ -93,7 +126,6 @@ class BaseGenerator(with_metaclass(ABCMeta, object)):
         self.message = message
         self.user_id = user_id
         self.room_id = room_id
-        assert self.PARSER
 
     def generate(self):
         parser = self.get_parser()
