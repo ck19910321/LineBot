@@ -82,11 +82,17 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
 class WoodyTimeConverter(BaseWoody):
     def __init__(self, type="date_convert", key=None, *args, **kwargs):
         super().__init__(type=type)
+        print(key)
         assert key is not None
         self.key = key
 
     def _get_cache(self):
-        cache_value = cache.get(self.key)
+        cache_value = cache.get(self.key) or {
+                "from_hours": 0,
+                "to_hours": 0,
+                "from_country": "",
+                "to_country": "",
+            }
         return cache_value
 
     def set_cache(self, shift_hours):

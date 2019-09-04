@@ -1,7 +1,6 @@
 # coding=utf-8
 
 from abc import ABCMeta
-from datetime import datetime, timedelta
 import re
 from six import with_metaclass
 from linebot.models import TextSendMessage, TemplateSendMessage, DatetimePickerAction, ButtonsTemplate
@@ -54,7 +53,6 @@ class DateTimeConvertController(BaseController):
         ("(?:日本)+|(?:大阪])+", 9 * -1),
     ]
 
-
     def _split_country(self, message):
         countries = message.split("時間轉換")
         return countries[0], countries[1]
@@ -81,7 +79,8 @@ class DateTimeConvertController(BaseController):
                 "from_hours": from_hours,
                 "to_hours": to_hours,
                 "from_country": from_country,
-                "to_country": to_country}
+                "to_country": to_country
+            }
         )
 
         return TemplateSendMessage(
