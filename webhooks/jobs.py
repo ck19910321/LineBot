@@ -88,11 +88,11 @@ class WoodyTimeConverter(BaseWoody):
         self.key = key
 
     def _get_cache(self):
-        cache_value = cache.get(self.key, '{"from_hours": 0, "to_hours": 0, "from_country": "", "to_country": ""}')
+        cache_value = cache.get(self.key) or '{"from_hours": 0, "to_hours": 0, "from_country": "", "to_country": ""}'
         return json.loads(cache_value)
 
     def set_cache(self, shift_hours):
-        cache.set(self.key, shift_hours, 5 * 60)
+        cache.set(self.key, shift_hours)
         print("key set", self.key)
         print(cache.get(self.key))
 
