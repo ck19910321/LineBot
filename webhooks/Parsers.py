@@ -99,7 +99,6 @@ class DateTimeConvertController(BaseController):
                 ]
             )
         )
-        return TextSendMessage(text=self.default)
 
 
 class ReminderController(BaseController):
