@@ -111,5 +111,5 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 STATIC_URL = '/static/'
 
-LINE_BOT_API = os.environ.get("LINE_BOT_API")
-LINE_BOT_HANDLER = os.environ.get("LINE_BOT_HANDLER")
+LINE_BOT_API = os.environ.get("LINE_BOT_API", "")
+LINE_BOT_HANDLER = os.environ.get("LINE_BOT_HANDLER", "")
