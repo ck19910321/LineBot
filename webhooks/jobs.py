@@ -1,17 +1,12 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 from datetime import datetime, timedelta
 from six import with_metaclass
-import json
 
-from django.core.cache import cache
 from linebot.models import TemplateSendMessage, TextSendMessage
 from linebot.models.actions import (
-    PostbackAction,
-    MessageAction,
-    URIAction,
     DatetimePickerAction,
 )
-from linebot.models.template import ButtonsTemplate, CarouselTemplate, CarouselColumn
+from linebot.models.template import ButtonsTemplate
 
 from .tasks import send
 
@@ -53,11 +48,11 @@ class TimeConvertParamsWrapper(BaseDataWrapper):
 
 
 class ReminderDataWrapper(BaseDataWrapper):
-    def __init__(self, text="", tz=None, target_date_time=None, *args, **kwargs):
+    def __init__(self, text="", tz=None, target_datetime=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = text
         self.tz = int(tz)
-        self.target_date_time = target_date_time
+        self.target_datetime = target_datetime
 
 
 class BaseWoody(with_metaclass(ABCMeta, object)):
@@ -119,7 +114,7 @@ class WoodyReminder(BaseWoody):
                 text="請選擇想提醒的時間",
                 actions=[
                     DatetimePickerAction(
-                        label="請選擇想轉換的時間",
+                        label="選擇時間",
                         data="type={type}&action=add_to_reminder&tz={tz}&text={text}".format(
                             type=self.type,
                             tz=self.wrapper_data_instance.tz,
