@@ -17,6 +17,9 @@ def get_readable_date_time(date_time):
 class DateTimeConvert(object):
     @classmethod
     def to_datetime(self, datetime_str):
+        if not datetime_str:
+            return datetime_str
+
         return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M")
 
 
