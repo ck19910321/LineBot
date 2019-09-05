@@ -48,7 +48,7 @@ def handle_text_message(event):
 def handle_post_text_message(event):
     key = "{}_{}".format(event.source.user_id, getattr(event.source, "room_id", ""))
     data, func_name, woody_type = _handle_postback_data(event.postback)
-    api = JOB_API[woody_type](data, key=key)
+    api = JOB_API[woody_type](data=data, key=key)
     func = "can_{}".format(func_name)
     try:
         message = getattr(api, func)()
@@ -67,5 +67,4 @@ def _handle_postback_data(postback):
 
     if getattr(postback, "params"):
         data["target_datetime"] = postback.params["datetime"]
-    print(data)
     return data, data.pop("action"), data.pop("type")
