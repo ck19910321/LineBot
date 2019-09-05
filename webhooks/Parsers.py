@@ -9,6 +9,7 @@ from linebot.models import (
     TemplateSendMessage,
     DatetimePickerAction,
     ButtonsTemplate,
+    PostbackAction,
 )
 
 from .jobs import WoodyReminder, WoodyTimeConverter
@@ -84,15 +85,6 @@ class DateTimeConvertController(BaseController):
                 to_country = to_country_match.group(0)
 
         if from_hours and to_hours:
-            time_converter = WoodyTimeConverter(key=self.key)
-            data = {
-                "from_hours": from_hours,
-                "to_hours": to_hours,
-                "from_country": from_country,
-                "to_country": to_country,
-            }
-            time_converter.set_cache(json.dumps(data))
-
             return TemplateSendMessage(
                 alt_text="時間轉換",
                 template=ButtonsTemplate(
@@ -101,7 +93,12 @@ class DateTimeConvertController(BaseController):
                     actions=[
                         DatetimePickerAction(
                             label="請選擇想轉換的時間",
-                            data="type=date_convert&action=choose",
+                            data="type=date_convert&action=choose&from_country={from_country}&to_country={to_country}&from_hours={from_hours}&to_hours={to_hours}".format(
+                                from_country=from_country,
+                                to_country=to_country,
+                                from_hours=from_hours,
+                                to_hours=to_hours,
+                            ),
                             mode="datetime",
                         )
                     ],
@@ -113,8 +110,33 @@ class DateTimeConvertController(BaseController):
 class ReminderController(BaseController):
     @property
     def result(self):
-        reminder = WoodyReminder(key=self.key)
-        return reminder.can_add_reminder(self.message)
+        return TemplateSendMessage(
+            alt_text="提醒小幫手",
+            template=ButtonsTemplate(
+                title="提醒事項",
+                text="請選擇時區",
+                actions=[
+                    PostbackAction(
+                        label="台灣時區",
+                        data="type=reminder&action=choose_date&tz=-8&text={}".format(
+                            self.message
+                        ),
+                    ),
+                    PostbackAction(
+                        label="美國時區",
+                        data="type=reminder&action=choose_date&tz=7&text={}".format(
+                            self.message
+                        ),
+                    ),
+                    PostbackAction(
+                        label="日本時區",
+                        data="type=reminder&action=choose_date&tz=-9&text={}".format(
+                            self.message
+                        ),
+                    ),
+                ],
+            ),
+        )
 
 
 class BaseParser(with_metaclass(ABCMeta, object)):

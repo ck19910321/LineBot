@@ -47,11 +47,11 @@ def handle_text_message(event):
 @handler.add(PostbackEvent)
 def handle_post_text_message(event):
     key = "{}_{}".format(event.source.user_id, getattr(event.source, "room_id", ""))
-    data, param = _handle_postback_data(event.postback)
-    api = JOB_API[data["type"]](key=key)
-    func = "can_{}".format(data["action"])
+    data, func_name, woody_type = _handle_postback_data(event.postback)
+    api = JOB_API[woody_type](key=key, **data)
+    func = "can_{}".format(func_name)
     try:
-        message = getattr(api, func)(param)
+        message = getattr(api, func)()
 
     except AttributeError:
         message = TextSendMessage(text="錯誤的訊息")
@@ -66,8 +66,6 @@ def _handle_postback_data(postback):
         data[pair[0]] = pair[1]
 
     if getattr(postback, "params"):
-        required_param = postback.params["datetime"]
-    else:
-        required_param = data.get("tz")
+        data["target_datetime"] = postback.params["datetime"]
 
-    return data, required_param
+    return data, data.pop("action"), data.pop("type")

@@ -24,84 +24,49 @@ def to_date_time_object(date_time):
     return datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
 
 
-class CacheReminder(object):
-    def __init__(self, events=None, date_time=None, status=False, shift_hours=0):
-        if events:
-            if isinstance(events, list):
-                self.events = events
-            else:
-                self.events = [events]
-        else:
-            self.events = []
-
-        self.date_time = date_time
-        self.status = status
-        self.shift_hours = shift_hours
-
-    def get_datetime_by_timezone(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M") + timedelta(
-            hours=self.shift_hours
-        )
-
-    def get_datetime_wo_tiemzone_aware(self):
-        return datetime.strptime(self.date_time, "%Y-%m-%dT%H:%M")
-
-    def set_timezone(self, hours):
-        self.shift_hours = hours
-
-    def get_events(self):
-        reminder_template = "來自專屬小幫手的貼心小叮嚀:\n"
-        event_str = "\n".join(event for event in self.events)
-        return "{}{}".format(reminder_template, event_str)
-
-    def add_event(self, text):
-        self.events.append(text)
-
-    def set_datetime(self, date_time):
-        self.date_time = date_time
-
-    def set_status(self, status):
-        self.status = status
-
-    def is_set(self):
-        return self.status
+class BaseDataWrapper(object):
+    def __init__(self, *args, **kwargs):
+        pass
 
     @classmethod
-    def new_from_dict(cls, **data):
+    def new_from_dict(cls, data):
         return cls(**data)
 
-    def to_dict(self):
-        return {
-            "events": [event for event in self.events],
-            "date_time": self.date_time,
-            "status": self.status,
-            "shift_hours": self.shift_hours,
-        }
 
-
-class CacheTimeConvert(object):
-    def __init__(self, from_country="", to_country="", from_hours=0, to_hours=0):
+class TimeConvertParamsWrapper(BaseDataWrapper):
+    def __init__(
+        self,
+        from_country="",
+        to_country="",
+        from_hours=0,
+        to_hours=0,
+        target_datetime=None,
+        *args,
+        **kwargs
+    ):
+        super().__init__(*args, **kwargs)
+        self.target_datetime = target_datetime
         self.from_country = from_country
         self.to_country = to_country
         self.from_hours = from_hours
         self.to_hours = to_hours
 
-    @classmethod
-    def new_from_dict(cls, **data):
-        return cls(**data)
 
-    def to_dict(self):
-        return {
-            "from_hours": self.from_hours,
-            "to_hours": self.to_hours,
-            "from_country": self.from_country,
-            "to_country": self.to_country,
-        }
+class ReminderDataWrapper(BaseDataWrapper):
+    def __init__(self, text="", tz=None, target_date_time=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text = text
+        self.tz = int(tz)
+        self.target_date_time = target_date_time
 
 
 class BaseWoody(with_metaclass(ABCMeta, object)):
-    def __init__(self, type=None):
+    WRAPPER_CLASS = None
+
+    def __init__(self, type=None, data=None, key=None):
         self.type = type
+        self.key = key
+        self.wrapper_data_instance = self._get_wrapper_instance(data)
         self.actions = self.get_actions()
 
     def get_actions(self):
@@ -117,33 +82,23 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
     def new_from_data(cls, **data):
         return cls(**data)
 
-    def _get_cache(self):
-        pass
+    def _get_wrapper_instance(self, data):
+        return self.WRAPPER_CLASS(**data)
 
 
 class WoodyTimeConverter(BaseWoody):
-    def __init__(self, type="date_convert", key=None, *args, **kwargs):
-        super().__init__(type=type)
-        assert key is not None
-        self.key = key
+    WRAPPER_CLASS = TimeConvertParamsWrapper
 
-    def _get_cache(self):
-        cache_value = cache.get(self.key)
-        return json.loads(cache_value)
+    # def __init__(self, type="date_convert", *args, **kwargs):
+    #     super().__init__(type=type, *args, **kwargs)
 
-    def set_cache(self, shift_hours):
-        cache.set(self.key, shift_hours)
-
-    def can_choose(self, date_time):
-        cache_dict = self._get_cache() or CacheTimeConvert().to_dict()
-        time_convert = CacheTimeConvert().new_from_dict(**cache_dict)
-        orig_date = to_date_time_object(date_time)
-        utc_date = orig_date - timedelta(hours=time_convert.from_hours)
-        new_date = utc_date + timedelta(hours=time_convert.to_hours)
-        print(cache_dict)
+    def can_choose(self):
+        orig_date = to_date_time_object(self.wrapper_data_instance.target_datetime)
+        utc_date = orig_date - timedelta(hours=self.wrapper_data_instance.from_hours)
+        new_date = utc_date + timedelta(hours=self.wrapper_data_instance.to_hours)
         return TextSendMessage(
             text="{instance.from_country}時間: {orig_date}，轉換至{instance.to_country}時間:{new_date}".format(
-                instance=time_convert,
+                instance=self.wrapper_data_instance,
                 orig_date=get_readable_date_time(orig_date),
                 new_date=get_readable_date_time(new_date),
             )
@@ -151,103 +106,44 @@ class WoodyTimeConverter(BaseWoody):
 
 
 class WoodyReminder(BaseWoody):
-    def __init__(self, type="reminder", key=None, *args, **kwargs):
-        super().__init__(type=type)
-        assert key is not None
-        self.key = key
-        self.cache_reminder = self._get_cache()
+    WRAPPER_CLASS = ReminderDataWrapper
 
-    def _get_cache(self):
-        cache_reminder_dict = cache.get(self.key)
-        if cache_reminder_dict:
-            cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
-        else:
-            cache_reminder = CacheReminder()
+    # def __init__(self, type="reminder", *args, **kwargs):
+    #     super().__init__(type=type, *args, **kwargs)
 
-        return cache_reminder
-
-    def can_add_reminder(self, text):
-        self.cache_reminder.add_event(text)
-        cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
-
+    def can_choose_date(self):
         return TemplateSendMessage(
             alt_text="提醒小幫手",
             template=ButtonsTemplate(
                 title="提醒事項",
-                text=self.cache_reminder.get_events(),
+                text="請選擇想提醒的時間",
                 actions=[
-                    PostbackAction(
-                        label="台灣時區",
-                        data="type=remind&action=adjust_timezone&tz=taiwan",
-                    ),
-                    PostbackAction(
-                        label="美國時區", data="type=remind&action=adjust_timezone&tz=us"
-                    ),
-                    PostbackAction(
-                        label="日本時區", data="type=remind&action=adjust_timezone&tz=japan"
-                    ),
-                ],
-            ),
-        )
-
-    def can_adjust_timezone(self, timezone):
-        time_zone_dict = {"taiwan": -8, "us": 7, "japan": -9}
-        self.cache_reminder.set_timezone(time_zone_dict[timezone])
-        cache.set(self.key, self.cache_reminder.to_dict(), 60 * 60 * 2)
-        return TemplateSendMessage(
-            alt_text="提醒小幫手",
-            template=ButtonsTemplate(
-                title="提醒事項",
-                text=self.cache_reminder.get_events(),
-                actions=[
-                    PostbackAction(label="移除", data="type=remind&action=cancel"),
                     DatetimePickerAction(
-                        label="選擇需要提醒的時間",
-                        data="type=remind&action=confirm",
+                        label="請選擇想轉換的時間",
+                        data="type=reminder&action=add_to_reminder&tz={tz}&text={text}".format(
+                            tz=self.wrapper_data_instance.tz,
+                            text=self.wrapper_data_instance.text,
+                        ),
                         mode="datetime",
-                    ),
+                    )
                 ],
             ),
         )
 
-    # def can_fetch_reminder_list(self, key):
-    #     cache_reminder_dict = cache.get(key)
-    #     if cache_reminder_dict:
-    #         cache_reminder = CacheReminder().new_from_dict(**cache_reminder_dict)
-    #         return TextSendMessage(text=cache_reminder.get_events())
-    #
-    #     return TextSendMessage(text="不好意思，你並沒有任何提醒事項")
-
-    def can_confirm(self, date_time):
-        self.cache_reminder.set_datetime(date_time)
-        self.cache_reminder.set_status(True)
-        time_to_send = self.cache_reminder.get_datetime_by_timezone()
-        # set status to true
-        secs_to_expire = (time_to_send - datetime.utcnow()).total_seconds()
-        if secs_to_expire > 0:
-            cache.set(self.key, self.cache_reminder.to_dict(), secs_to_expire)
-        else:
-            cache.delete(self.key)
+    def can_add_to_reminder(self):
+        time_to_send = to_date_time_object(
+            self.wrapper_data_instance.target_datetime
+        ) - timedelta(self.wrapper_data_instance.tz)
 
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
-        send.apply_async((target, self.cache_reminder.get_events()), eta=time_to_send)
+        send.apply_async((target, self.wrapper_data_instance.text), eta=time_to_send)
+
         return TextSendMessage(
             text="設定完畢！將於 {} 提醒您。".format(
-                self.cache_reminder.get_datetime_wo_tiemzone_aware().strftime(
-                    "%Y-%m-%d %I:%M %p"
-                )
+                get_readable_date_time(self.wrapper_data_instance.target_datetime)
             )
         )
 
-    def can_ask(self, value=None):
-        cache_reminder = CacheReminder()
-        cache.set(self.key, cache_reminder.to_dict(), 60 * 60 * 2)
-        return TextSendMessage(text="請回覆想被提醒的事項")
 
-    def can_cancel(self, value=None):
-        cache.delete(self.key)
-        return TextSendMessage(text="已移除所有提醒")
-
-
-JOB_API = {"remind": WoodyReminder, "date_convert": WoodyTimeConverter}
+JOB_API = {"reminder": WoodyReminder, "date_convert": WoodyTimeConverter}
