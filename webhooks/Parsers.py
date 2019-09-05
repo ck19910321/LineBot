@@ -118,19 +118,19 @@ class ReminderController(BaseController):
                 actions=[
                     PostbackAction(
                         label="台灣時區",
-                        data="type=reminder&action=choose_date&tz=-8&text={}".format(
+                        data="type=reminder&action=choose_date&tz=8&text={}".format(
                             self.message
                         ),
                     ),
                     PostbackAction(
                         label="美國時區",
-                        data="type=reminder&action=choose_date&tz=7&text={}".format(
+                        data="type=reminder&action=choose_date&tz=-7&text={}".format(
                             self.message
                         ),
                     ),
                     PostbackAction(
                         label="日本時區",
-                        data="type=reminder&action=choose_date&tz=-9&text={}".format(
+                        data="type=reminder&action=choose_date&tz=9&text={}".format(
                             self.message
                         ),
                     ),
