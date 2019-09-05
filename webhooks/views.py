@@ -65,5 +65,6 @@ def _handle_postback_data(postback):
     for pair in parse_qsl(postback.data):
         data[pair[0]] = pair[1]
 
-    data["target_datetime"] = postback.params["datetime"] if getattr(postback, "params") else None
+    if getattr(postback, "params"):
+        data["target_datetime"] = postback.params["datetime"]
     return data, data.pop("action"), data.pop("type")
