@@ -64,7 +64,7 @@ class ReminderDataWrapper(BaseDataWrapper):
 class BaseWoody(with_metaclass(ABCMeta, object)):
     WRAPPER_CLASS = None
 
-    def __init__(self, type=None, data=None, key=None):
+    def __init__(self, data, key=None, type=None, *args, **kwargs):
         self.type = type
         self.key = key
         self.wrapper_data_instance = self._get_wrapper_instance(data)
@@ -90,8 +90,8 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
 class WoodyTimeConverter(BaseWoody):
     WRAPPER_CLASS = TimeConvertParamsWrapper
 
-    # def __init__(self, type="date_convert", *args, **kwargs):
-    #     super().__init__(type=type, *args, **kwargs)
+    def __init__(self, type="date_convert", *args, **kwargs):
+        super().__init__(type=type, *args, **kwargs)
 
     def can_choose(self):
         orig_date = to_date_time_object(self.wrapper_data_instance.target_datetime)
@@ -109,8 +109,8 @@ class WoodyTimeConverter(BaseWoody):
 class WoodyReminder(BaseWoody):
     WRAPPER_CLASS = ReminderDataWrapper
 
-    # def __init__(self, type="reminder", *args, **kwargs):
-    #     super().__init__(type=type, *args, **kwargs)
+    def __init__(self, type="reminder", *args, **kwargs):
+        super().__init__(type=type, *args, **kwargs)
 
     def can_choose_date(self):
         return TemplateSendMessage(
@@ -121,7 +121,8 @@ class WoodyReminder(BaseWoody):
                 actions=[
                     DatetimePickerAction(
                         label="請選擇想轉換的時間",
-                        data="type=reminder&action=add_to_reminder&tz={tz}&text={text}".format(
+                        data="type={type}&action=add_to_reminder&tz={tz}&text={text}".format(
+                            type=self.type,
                             tz=self.wrapper_data_instance.tz,
                             text=self.wrapper_data_instance.text,
                         ),
