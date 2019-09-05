@@ -131,7 +131,8 @@ class WoodyReminder(BaseWoody):
         time_to_send = target_datetime_obj - timedelta(hours=self.wrapper_data_instance.tz)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
-        send.apply_async((target, self.wrapper_data_instance.text), eta=time_to_send)
+        reminder_text = "來自專屬秘書的叮嚀: \n {}".format(self.wrapper_data_instance.text)
+        send.apply_async((target, reminder_text), eta=time_to_send)
 
         return TextSendMessage(
             text="設定完畢！將於 {} 提醒您。".format(get_readable_date_time(target_datetime_obj))
