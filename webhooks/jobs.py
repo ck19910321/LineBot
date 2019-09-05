@@ -17,12 +17,15 @@ def get_readable_date_time(date_time):
 class DateTimeConvert(object):
     @classmethod
     def to_datetime(self, datetime_str):
+        if not datetime_str:
+            return datetime_str
+
         return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M")
 
 
 @attr.s
 class TimeConvertParamsWrapper(object):
-    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime)
+    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime, default=None)
     from_country = attr.ib(default="")
     to_country = attr.ib(default="")
     from_hours = attr.ib(converter=int, default=0)
@@ -32,7 +35,7 @@ class TimeConvertParamsWrapper(object):
 
 @attr.s
 class ReminderDataWrapper(object):
-    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime, init=False)
+    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime, default=None)
     text = attr.ib(default="")
     tz = attr.ib(converter=int, default=0)
 
