@@ -3,9 +3,7 @@ from datetime import datetime, timedelta
 from six import with_metaclass
 
 from linebot.models import TemplateSendMessage, TextSendMessage
-from linebot.models.actions import (
-    DatetimePickerAction,
-)
+from linebot.models.actions import DatetimePickerAction
 from linebot.models.template import ButtonsTemplate
 
 from .tasks import send
@@ -127,18 +125,17 @@ class WoodyReminder(BaseWoody):
         )
 
     def can_add_to_reminder(self):
-        time_to_send = to_date_time_object(
+        target_datetime_obj = to_date_time_object(
             self.wrapper_data_instance.target_datetime
-        ) - timedelta(self.wrapper_data_instance.tz)
+        )
+        time_to_send = target_datetime_obj - timedelta(self.wrapper_data_instance.tz)
 
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         send.apply_async((target, self.wrapper_data_instance.text), eta=time_to_send)
 
         return TextSendMessage(
-            text="設定完畢！將於 {} 提醒您。".format(
-                get_readable_date_time(self.wrapper_data_instance.target_datetime)
-            )
+            text="設定完畢！將於 {} 提醒您。".format(get_readable_date_time(target_datetime_obj))
         )
 
 
