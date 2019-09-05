@@ -128,9 +128,7 @@ class WoodyReminder(BaseWoody):
         target_datetime_obj = to_date_time_object(
             self.wrapper_data_instance.target_datetime
         )
-        time_to_send = target_datetime_obj - timedelta(self.wrapper_data_instance.tz)
-        print(vars(self.wrapper_data_instance))
-        print(target_datetime_obj, time_to_send)
+        time_to_send = target_datetime_obj - timedelta(hours=self.wrapper_data_instance.tz)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         send.apply_async((target, self.wrapper_data_instance.text), eta=time_to_send)
