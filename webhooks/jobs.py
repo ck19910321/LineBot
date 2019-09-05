@@ -1,3 +1,4 @@
+import attr
 from abc import ABCMeta
 from datetime import datetime, timedelta
 from six import with_metaclass
@@ -13,44 +14,27 @@ def get_readable_date_time(date_time):
     return date_time.strftime("%Y-%m-%d %I:%M %p")
 
 
-def to_date_time_object(date_time):
-    return datetime.strptime(date_time, "%Y-%m-%dT%H:%M")
-
-
-class BaseDataWrapper(object):
-    def __init__(self, *args, **kwargs):
-        pass
-
+class DateTimeConvert(object):
     @classmethod
-    def new_from_dict(cls, data):
-        return cls(**data)
+    def to_datetime(self, datetime_str):
+        return datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M")
 
 
-class TimeConvertParamsWrapper(BaseDataWrapper):
-    def __init__(
-        self,
-        from_country="",
-        to_country="",
-        from_hours=0,
-        to_hours=0,
-        target_datetime=None,
-        *args,
-        **kwargs
-    ):
-        super().__init__(*args, **kwargs)
-        self.target_datetime = target_datetime
-        self.from_country = from_country
-        self.to_country = to_country
-        self.from_hours = int(from_hours)
-        self.to_hours = int(to_hours)
+@attr.s
+class TimeConvertParamsWrapper(object):
+    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime)
+    from_country = attr.ib(default="")
+    to_country = attr.ib(default="")
+    from_hours = attr.ib(converter=int, default=0)
+    to_hours = attr.ib(converter=int, default=0)
 
 
-class ReminderDataWrapper(BaseDataWrapper):
-    def __init__(self, text="", tz=None, target_datetime=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.text = text
-        self.tz = int(tz)
-        self.target_datetime = target_datetime
+
+@attr.s
+class ReminderDataWrapper(object):
+    target_datetime = attr.ib(converter=DateTimeConvert.to_datetime)
+    text = attr.ib(default="")
+    tz = attr.ib(converter=int, default=0)
 
 
 class BaseWoody(with_metaclass(ABCMeta, object)):
@@ -71,10 +55,6 @@ class BaseWoody(with_metaclass(ABCMeta, object)):
             ]
         )
 
-    @classmethod
-    def new_from_data(cls, **data):
-        return cls(**data)
-
     def _get_wrapper_instance(self, data):
         return self.WRAPPER_CLASS(**data)
 
@@ -86,13 +66,12 @@ class WoodyTimeConverter(BaseWoody):
         super().__init__(type=type, *args, **kwargs)
 
     def can_choose(self):
-        orig_date = to_date_time_object(self.wrapper_data_instance.target_datetime)
-        utc_date = orig_date - timedelta(hours=self.wrapper_data_instance.from_hours)
+        utc_date = self.wrapper_data_instance.target_datetime - timedelta(hours=self.wrapper_data_instance.from_hours)
         new_date = utc_date + timedelta(hours=self.wrapper_data_instance.to_hours)
         return TextSendMessage(
             text="{instance.from_country}時間: {orig_date}，轉換至{instance.to_country}時間:{new_date}".format(
                 instance=self.wrapper_data_instance,
-                orig_date=get_readable_date_time(orig_date),
+                orig_date=get_readable_date_time(self.wrapper_data_instance.target_datetime),
                 new_date=get_readable_date_time(new_date),
             )
         )
@@ -125,17 +104,14 @@ class WoodyReminder(BaseWoody):
         )
 
     def can_add_to_reminder(self):
-        target_datetime_obj = to_date_time_object(
-            self.wrapper_data_instance.target_datetime
-        )
-        time_to_send = target_datetime_obj - timedelta(hours=self.wrapper_data_instance.tz)
+        time_to_send = self.wrapper_data_instance.target_datetime - timedelta(hours=self.wrapper_data_instance.tz)
         user_id, room_id = self.key.split("_")
         target = room_id if room_id else user_id
         reminder_text = "來自專屬秘書的叮嚀: \n {}".format(self.wrapper_data_instance.text)
         send.apply_async((target, reminder_text), eta=time_to_send)
 
         return TextSendMessage(
-            text="設定完畢！將於 {} 提醒您。".format(get_readable_date_time(target_datetime_obj))
+            text="設定完畢！將於 {} 提醒您。".format(get_readable_date_time(self.wrapper_data_instance.target_datetime))
         )
 
 
