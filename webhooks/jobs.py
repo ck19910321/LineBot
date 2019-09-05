@@ -58,6 +58,7 @@ class ReminderDataWrapper(BaseDataWrapper):
         self.text = text
         self.tz = int(tz)
         self.target_date_time = target_date_time
+        print(self.text, self.tz, self.target_date_time)
 
 
 class BaseWoody(with_metaclass(ABCMeta, object)):
