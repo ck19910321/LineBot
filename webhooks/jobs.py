@@ -89,6 +89,7 @@ class WoodyTimeConverter(BaseWoody):
         orig_date = to_date_time_object(self.wrapper_data_instance.target_datetime)
         utc_date = orig_date - timedelta(hours=self.wrapper_data_instance.from_hours)
         new_date = utc_date + timedelta(hours=self.wrapper_data_instance.to_hours)
+        print(vars(self.wrapper_data_instance))
         return TextSendMessage(
             text="{instance.from_country}時間: {orig_date}，轉換至{instance.to_country}時間:{new_date}".format(
                 instance=self.wrapper_data_instance,

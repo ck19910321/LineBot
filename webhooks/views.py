@@ -49,6 +49,7 @@ def handle_post_text_message(event):
     key = "{}_{}".format(event.source.user_id, getattr(event.source, "room_id", ""))
     data, func_name, woody_type = _handle_postback_data(event.postback)
     api = JOB_API[woody_type](data=data, key=key)
+    print("Hey", data, key)
     func = "can_{}".format(func_name)
     try:
         message = getattr(api, func)()
