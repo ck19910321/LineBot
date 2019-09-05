@@ -67,5 +67,5 @@ def _handle_postback_data(postback):
 
     if getattr(postback, "params"):
         data["target_datetime"] = postback.params["datetime"]
-
+    print(data)
     return data, data.pop("action"), data.pop("type")
